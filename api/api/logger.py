@@ -22,7 +22,7 @@ def initialize_logs():
 		if not os.path.exists(log_path):
 			os.mkdir(log_path)
 
-		log_handler = logging.handlers.RotatingFileHandler(os.path.join(log_path, name + ".log"))
+		log_handler = logging.handlers.RotatingFileHandler(os.path.join(log_path, name + ".log"), encoding="utf-8")
 		new_logger.addHandler(log_handler)
 	for importer, modname, ispkg in pkgutil.walk_packages(path="../api"):
 		create_logger(modname)

@@ -103,7 +103,7 @@ def ticket_data():
 
 	if htid is not None:
 		result = get_ticket(htid=htid).first()
-	elif user.is_admin():
+	elif _user.is_admin():
 		result = get_ticket().all()
 	else:
 		result = get_ticket(author=_user.uid).all()

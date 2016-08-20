@@ -121,6 +121,9 @@ class Users(db.Model):
 		result["total_submissions"] = n_solved[1]
 		return result
 
+	def is_admin(self):
+		return self.admin == True
+
 class Activity(db.Model):
 	"""
 	Types of user activity:
@@ -210,6 +213,7 @@ class Teams(db.Model):
 
 	def remove_all_members(self):
 		Users.query.filter_by(tid=self.tid).update({ "tid": -1 })
+		db.session.delete(self)
 		db.session.commit()
 		db.session.close()
 
@@ -389,7 +393,7 @@ class Solves(db.Model):
 	def get_value(self):
 		problem = Problems.query.filter_by(pid=self.pid).first()
 		multiplier = 1
-		if self.bonus != -1:
+		if self.bonus is not None and self.bonus > 0:
 			multiplier += bonuses[problem.bonus][self.bonus-1]/100.0
 		return problem.value * multiplier
 
@@ -476,22 +480,21 @@ class TicketReplies(db.Model):
 class ProgrammingSubmissions(db.Model):
 	psid = db.Column(db.Integer, index=True, primary_key=True)
 	pid = db.Column(db.String(128))
+	uid = db.Column(db.Integer)
 	tid = db.Column(db.Integer)
-	date = db.Column(db.Integer, default=utils.get_time_since_epoch())
-	message = db.Column(db.Text)
-	log = db.Column(db.Text)
-	submission_path = db.Column(db.Text)
-	number = db.Column(db.Integer)
-	duration = db.Column(db.Float)
+	jid = db.Column(db.Integer)
+	creation_time = db.Column(db.Integer, default=utils.get_time_since_epoch())
+	duration = db.Column(db.Integer)
+	verdict = db.Column(db.String(256))
+	language = db.Column(db.String(32))
+	execution_time = db.Column(db.Float)
 
-	def __init__(self, pid, tid, submission_path, message, log, number, duration):
+	def __init__(self, pid, uid, tid, jid, language):
 		self.pid = pid
+		self.uid = uid
 		self.tid = tid
-		self.submission_path = submission_path
-		self.message = message
-		self.log = log
-		self.number = number
-		self.duration = duration
+		self.jid = jid
+		self.verdict = "waiting"
 
 class Pages(db.Model):
 	pgid = db.Column(db.Integer, index=True, primary_key=True)

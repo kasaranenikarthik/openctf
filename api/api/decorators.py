@@ -80,7 +80,7 @@ def login_required(f):
 def team_required(f):
 	@wraps(f)
 	def wrapper(*args, **kwds):
-		if not user.in_team(user.get_user()):
+		if not user.in_team(user.get_user().first()):
 			return { "success": 0, "message": "You need a team." }
 		return f(*args, **kwds)
 	return wrapper
@@ -88,7 +88,7 @@ def team_required(f):
 def team_finalize_required(f):
 	@wraps(f)
 	def wrapper(*args, **kwds):
-		if team.get_team(tid=session["tid"]).first().finalized != True:
+		if team.get_team(tid=user.get_user().first().tid).first().finalized != True:
 			return { "success": 0, "message": "Your team must be finalized to view this content!" }
 		return f(*args, **kwds)
 	return wrapper
@@ -99,7 +99,10 @@ import team
 def admins_only(f):
 	@wraps(f)
 	def wrapper(*args, **kwds):
-		if not user.is_admin():
+		_user = user.get_user()
+		if not _user:
+			return { "success": 0, "message": "Not authorized." }
+		if not _user.first().is_admin():
 			return { "success": 0, "message": "Not authorized." }
 		return f(*args, **kwds)
 	return wrapper

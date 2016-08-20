@@ -219,14 +219,16 @@ def user_status():
 	result = {
 		"success": 1,
 		"logged_in": logged_in,
-		"admin": is_admin(),
 		"competition": utils.is_ctf_time(),
-		"in_team": in_team(get_user()),
-		"username": session["username"] if logged_in else "",
 		"ctf_name": utils.get_ctf_name(),
 		"stylesheet": utils.get_config("stylesheet", "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css")
 	}
 	if logged_in:
+		_user = get_user()
+		if _user is not None: _user = _user.first()
+		result["admin"] = _user.is_admin() if _user is not None else False
+		result["in_team"] = in_team(_user) if _user is not None else False
+		result["username"] = _user.username
 		result["has_team"] = in_team(get_user().first())
 	if not utils.is_setup_complete():
 		result["redirect"] = "/setup"
@@ -585,9 +587,6 @@ def get_user(username=None, username_lower=None, email=None, uid=None, reset_tok
 			return None
 		result = Users.query.filter_by(**match)
 		return result
-
-def is_admin():
-	return is_logged_in() and session.get("admin")
 
 def in_team(user):
 	return hasattr(user, "tid") and user.tid >= 0

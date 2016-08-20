@@ -113,8 +113,8 @@ def problem_submit():
 	params = utils.flat_multi(request.form)
 	pid = params.get("pid")
 	flag = params.get("flag")
-	tid = session.get("tid")
 	_user = user.get_user().first()
+	tid = _user.tid
 	username = _user.username
 
 	problem = Problems.query.filter_by(pid=pid).first()
@@ -175,7 +175,7 @@ def problem_submit():
 @login_required
 def problem_data():
 	_user = user.get_user().first()
-	if not user.is_admin():
+	if not _user.is_admin():
 		if not user.in_team(_user):
 			raise WebException("You need a team.")
 		if not team.team_finalized(team.get_team_of(_user.uid)):
@@ -207,7 +207,7 @@ def problem_data():
 			"bonus": problem.bonus,
 			"autogen": problem.autogen == True
 		}
-		if "admin" in session and session["admin"]:
+		if _user.is_admin():
 			data.update(admin_data)
 		if problem.autogen:
 			grader = imp.load_source("grader", problem.grader)

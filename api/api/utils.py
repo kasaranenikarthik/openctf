@@ -38,8 +38,8 @@ def hash_password(s):
 def check_password(hashed_password, try_password):
 	return check_password_hash(hashed_password, try_password)
 
-def generate_string(length=32, alpha=string.hexdigits):
-	return "".join([random.choice(alpha) for x in range(length)])
+def generate_string(length=32, alpha=string.hexdigits, rng=random):
+	return "".join([rng.choice(alpha) for x in range(length)])
 
 def flat_multi(multidict):
 	flat = {}

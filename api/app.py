@@ -39,7 +39,7 @@ def get_file(path):
 @app.errorhandler(404)
 @api_wrapper
 def page_not_found(e):
-	return { "success": 0, "message": "You done goofed." }
+	return { "success": 0, "message": "You done goofed bro." }
 
 app.register_blueprint(api.activity.blueprint, url_prefix="/api/activity")
 app.register_blueprint(api.admin.blueprint, url_prefix="/api/admin")

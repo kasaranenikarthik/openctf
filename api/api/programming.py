@@ -4,11 +4,14 @@ from decorators import api_wrapper, login_required, team_required, WebException
 from models import db, Problems, ProgrammingSubmissions, Solves, Activity
 
 import imp
+import json
 import os
+import requests
 import shutil
 import subprocess
 import time
 
+import autogen
 import cache
 import problem
 import team
@@ -17,11 +20,8 @@ import utils
 
 blueprint = Blueprint("programming", __name__)
 
-extensions = {
-	"python2": "py",
-	"python3": "py",
-	"java": "java"
-}
+JUDGE_URL = os.getenv("JUDGE_URL", None)
+JUDGE_APIKEY = os.getenv("JUDGE_APIKEY", None)
 
 @blueprint.route("/submissions/delete", methods=["POST"])
 @api_wrapper
@@ -51,18 +51,8 @@ def get_submissions():
 	submissions_return = []
 	tid = session.get("tid")
 	submissions = ProgrammingSubmissions.query.filter_by(tid=tid).order_by(ProgrammingSubmissions.psid.desc()).all()
-	if submissions is not None:
-		for submission in submissions:
-			_problem = problem.get_problem(pid=submission.pid).first()
-			submissions_return.append({
-				"psid": submission.psid,
-				"title": _problem.title if _problem else "",
-				"message": submission.message,
-				"log": submission.log,
-				"date": utils.isoformat(submission.date),
-				"number": submission.number,
-				"duration": submission.duration
-			})
+	for submission in submissions:
+		pass
 	return { "success": 1, "submissions": submissions_return }
 
 @blueprint.route("/problems", methods=["GET"])
@@ -85,7 +75,6 @@ def get_problems():
 				"pid": _problem.pid,
 				"value": _problem.value
 			})
-
 	return { "success": 1, "problems": data }
 
 @blueprint.route("/submit", methods=["POST"])
@@ -93,89 +82,59 @@ def get_problems():
 @login_required
 @team_required
 def submit_program():
+	if JUDGE_URL is None or JUDGE_APIKEY is None:
+		raise WebException("Judge API key missing.")
 	params = utils.flat_multi(request.form)
 
 	pid = params.get("pid")
-	tid = session.get("tid")
 	_user = user.get_user().first()
-
 	language = params.get("language")
 	submission_contents = params.get("submission")
 
-	_problem = problem.get_problem(pid=pid).first()
-	if _problem is None:
-		raise WebException("Problem does not exist.")
+	r = requests.post(JUDGE_URL + "/jobs", data={
+		"problem_id": 1337,
+		"language": language,
+		"code": submission_contents
+	}, headers = { "api_key": JUDGE_APIKEY })
+	if r.status_code != 201:
+		raise WebException("Invalid response from judge. %s" % r.raw)
 
-	if _problem.category != "Programming":
-		raise WebException("Can't judge this problem.")
+	data = json.loads(r.text)
+	jid = data["id"]
 
-	if language not in extensions:
-		raise WebException("Language not supported.")
-
-	solved = Solves.query.filter_by(pid=pid, tid=tid, correct=1).first()
-	if solved:
-		raise WebException("You already solved this problem.")
-
-	judge_folder = os.path.join(app.config["GRADER_FOLDER"], pid)
-	if not os.path.exists(judge_folder):
-		os.makedirs(judge_folder)
-
-	submission_folder = os.path.join(judge_folder, utils.generate_string())
-	while os.path.exists(submission_folder):
-		submission_folder = os.path.join(judge_folder, utils.generate_string())
-
-	os.makedirs(submission_folder)
-
-	submission_path = os.path.join(submission_folder, "program.%s" % extensions[language])
-
-	open(submission_path, "w").write(submission_contents)
-	message, log, duration = judge(submission_path, language, pid)
-
-	number = ProgrammingSubmissions.query.filter_by(tid=tid).with_entities(ProgrammingSubmissions.number).order_by(ProgrammingSubmissions.number.desc()).first()
-
-	if number is None:
-		number = 1
-	else:
-		number = number[0] + 1
-
-	submission = ProgrammingSubmissions(pid, tid, submission_path, message, log, number, duration)
-
-	correct = message == "Correct!"
-
+	submission = ProgrammingSubmissions(pid, _user.uid, _user.tid, jid, language)
 	with app.app_context():
-		solve = Solves(pid, _user.uid, tid, submission_path, correct)
-		db.session.add(solve)
 		db.session.add(submission)
 		db.session.commit()
+		db.session.close()
 
-		if correct:
-			# Wait until after the solve has been added to the database before adding bonus
-			solves = problem.get_solves(pid=pid)
-			solve.bonus = [-1, solves][solves < 3]
-			db.session.add(solve)
-			cache.invalidate_memoization(problem.get_solves, pid)
+	return { "success": 1, "message": "Submitted!" }
 
-			if _user:
-				activity = Activity(_user.uid, 3, tid=tid, pid=pid)
-				db.session.add(activity)
+def get_submission(jid):
+	submission = ProgrammingSubmissions.query.filter_by(jid=jid)
+	if submission is None:
+		return None
+	obj = {
+		"jid": submission.jid,
+		"pid": submission.pid,
+	}
+	if submission.verdict == "waiting":
+		# send post request
+		r = requests.post(JUDGE_URL + "/api/", data={
+			
+		}, headers = { "api_key": JUDGE_APIKEY })
+	else:
+		obj["verdict"] = submission.verdict
+		if obj["verdict"] == "accepted":
+			random = autogen.get_random(submission.pid, submission.tid)
+			obj["token"] = utils.generate_string()
+		obj["language"] = submission.language
+		obj["started"] = submission.creation_time
+		obj["execution_time"] = submission.execution_time
 
-			db.session.commit()
-			db.session.close()
-		new = {
-			"psid": submission.psid,
-			"title": _problem.title,
-			"message": submission.message,
-			"log": submission.log,
-			"date": utils.isoformat(submission.date),
-			"number": submission.number
-		}
-
-	shutil.rmtree(submission_folder)
-
-	return { "success": message == "Correct!", "message": message , "new_submission": new }
+	return obj
 
 def judge(submission_path, language, pid):
-
 	if not os.path.exists(submission_path):
 		raise WebException("Program is missing.")
 
@@ -256,6 +215,7 @@ def judge(submission_path, language, pid):
 	return message, log, time.time() - start_time
 
 def validate_judge(judge_contents):
+	return
 	tmp_judge = "/tmp/judge.py"
 
 	open(tmp_judge, "w").write(judge_contents)

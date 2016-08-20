@@ -354,14 +354,16 @@ def team_finalize():
 @team_required
 def team_leave():
 	_user = user.get_user().first()
-	_team = get_team(tid=_user.tid).first()
+	tid = _user.tid
+	_team = get_team(tid=tid).first()
 	with app.app_context():
 		if _user.uid == _team.owner:
-			_team.remove_all_members()
+			# db.session.delete(_team)
+			Users.query.filter_by(tid=tid).update({ "tid": -1 })
+			Teams.query.filter_by(tid=tid).delete()
 		else:
 			_team.remove_member(_user.uid)
-			db.session.add(Activity(_user.uid, 2, tid=_team.tid, pid=-1))
-		db.session.delete(_team)
+		db.session.add(Activity(_user.uid, 2, tid=_team.tid, pid=-1))
 		db.session.commit()
 		db.session.close()
 	return { "success": 1 }
