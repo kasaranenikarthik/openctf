@@ -8,6 +8,18 @@ This repository houses the source code for the 2017 EasyCTF contest platform. Ov
 * Auto-generated challenges per team.
 * Programming judge.
 
+Project Structure
+-----------------
+
+This repository is like the control center of the entire platform. It contains a `docker-compose.yml` file that lists all of the components that are required by the platform. The components are listed here:
+
+* [`easyctf/openctf-server:latest`](https://github.com/easyctf/openctf-server) - The main web application.
+* [`easyctf/openctf-filestore:latest`](https://github.com/easyctf/openctf-filestore) - The static file server.
+* [`easyctf/openctf-judge:latest`](https://github.com/easyctf/openctf-judge) - The programming judge manager.
+* [`easyctf/openctf-jury:latest`](https://github.com/easyctf/openctf-jury) - The programming grader jury.
+
+You don't need to pull these git repositories in order to use OpenCTF, since these images have been pushed to Docker Cloud for distribution. The `docker-compose.yml` file is already pulling from Docker Cloud by default.
+
 Installation
 ------------
 
