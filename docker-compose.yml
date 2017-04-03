@@ -1,138 +1,16 @@
 version: '2'
 
 services:
-
-  # OpenCTF Components
-  
-  app:
-    restart: "always"
-    image: easyctf/openctf-server:latest
-    entrypoint:
-      - bash
-      - /openctf/start.sh
-      - runserver
-    environment:
-      SERVICE_NAME: app
-      SERVICE_TAGS: platform
-    env_file: .env
-    links:
-      - db
-      - redis
-      - filestore
-      - judge
-    expose:
-      - 80
-
-  judge_hook:
-    restart: "always"
-    image: easyctf/openctf-server:latest
-    env_file: .env
-    environment:
-      JUDGE_API_KEY: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-    entrypoint:
-      - bash
-      - /openctf/start.sh
-      - runserver # TODO: Make this a separate command that only listens for judge.
+  openctf:
+    build: openctf
     networks:
-      - default
-      - main
-    links:
-      - db
-      - redis
-
-  filestore:
-    restart: "always"
-    image: easyctf/openctf-filestore:latest
-    entrypoint:
-      - bash
-      - /app/start.sh
-    expose:
-      - 80
-      - 8000
-    volumes:
-      - "./.data/filestore:/usr/share/nginx/html"
-
-  judge:
-    image: easyctf/openctf-judge:latest
-    env_file: .env-judge
-    environment:
-      SECRET: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-    networks:
-      - default
-      - main
-    links:
-      - judge_db
-    expose:
-      - 80
-    depends_on:
-      - judge_db
-      - judge_migrations
-
-  judge_migrations:
-    image: easyctf/openctf-judge:latest
-    env_file: .env-judge
-    command: bash -c "bash wait-for-db.sh && python3 manage.py db upgrade"
-    links:
-      - judge_db
-    depends_on:
-      - judge_db
-
-  judge_db:
-    image: mariadb:10.1.16
-    env_file: .env-judge
-    expose:
-      - 3306
-    volumes:
-      - "./.data/judge:/var/lib/mysql"
-
-  # Utilities
-
-  nginx:
-    restart: "always"
-    build: nginx
-    env_file: .env
-    depends_on:
-      - app
-    links:
-      - app
-      - filestore
+      - openctf
     ports:
-      - "80:80"
-      - "443:443"
-
-  redis:
-    restart: "no"
-    image: redis
-
-  consul:
-    restart: "always"
-    image: gliderlabs/consul-server:latest
-    command: -bootstrap
-    ports:
-      - "8300:8300"
-      - "8400:8400"
-      - "8500:8500"
-      - "8600:53/udp"
-
-  registrator:
-    restart: "always"
-    image: gliderlabs/registrator:master
-    depends_on:
-      - consul
-    command: -internal -resync 600 consul://consul:8500
+      - 4242:4242
     volumes:
-      - "/var/run/docker.sock:/tmp/docker.sock"
-
-  db:
-    restart: "no"
-    image: mariadb:latest
-    env_file: .env
-    expose:
-      - 3306
-    volumes:
-      - "./db:/etc/mysql/conf.d"
-      - "./.data/openctf:/var/lib/mysql"
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./openctf:/openctf
 
 networks:
-  main:
+  openctf:
     driver: bridge
