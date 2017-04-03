@@ -5,5 +5,4 @@ RUN mkdir -p /openctf
 COPY . /openctf/
 WORKDIR /openctf
 
-ENTRYPOINT ["gunicorn", "--bind", "0.0.0.0:4242", "-w", "1", "app:app"]
-
+ENTRYPOINT ["python", "app.py"]
