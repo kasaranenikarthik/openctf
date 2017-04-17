@@ -1,8 +1,11 @@
+import traceback
 from json import dumps
 
 import docker
 from flask import Flask, render_template
 from flask_socketio import SocketIO
+
+import api
 
 app = Flask(__name__)
 app.config["TEMPLATES_AUTO_RELOAD"] = True
@@ -10,9 +13,30 @@ app.config["TEMPLATES_AUTO_RELOAD"] = True
 socketio = SocketIO(app)
 client = docker.from_env()
 
+# All required/optional components for OpenCTF
+#   buildpath: Path (local URL)
+#   name: Name of the service.
+#   require: Whether it's required or not.
+#   single: Whether this service must be limited to a single instance or not.
+components = [
+    {"name": "cache", "required": True, "single": True},
+    {"name": "db", "required": True, "single": True},
+    {"name": "filestore", "required": True, "single": True},
+    {"name": "web", "required": True},
+]
+
 
 def status():
-    return "shiet"
+    try:
+        data = dict()
+        data["components"] = []
+        for component in components:
+            cdata = dict()
+            cdata["name"] = component["name"]
+            data["components"].append(cdata)
+        return data
+    except:
+        return dict(error=traceback.format_exc())
 
 
 @socketio.on("status")
