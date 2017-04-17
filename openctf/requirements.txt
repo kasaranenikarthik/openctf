@@ -1,2 +1,4 @@
+eventlet
 flask
+flask-socketio
 docker
