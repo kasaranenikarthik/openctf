@@ -1,0 +1,26 @@
+version: '2'
+
+services:
+  db:
+    env_file: .env
+    expose: [ 3306 ]
+    image: mariadb:latest
+    networks: [ database ]
+  redis:
+    env_file: .env
+    expose: [ 6379 ]
+    image: redis:latest
+    networks: [ redis ]
+  web:
+    build: web
+    env_file: .env
+    networks: [ database, redis ]
+    ports: [ "80:80" ]
+    restart: always
+    volumes: [ "./web:/openctf" ]
+
+networks:
+  database:
+    driver: bridge
+  redis:
+    driver: bridge

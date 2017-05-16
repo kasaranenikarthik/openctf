@@ -1,0 +1,49 @@
+{% from "templates.html" import flashes %}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>
+        {% block title %}{% endblock %} - {{ get_ctf_name() }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="application-name" content="{{ get_ctf_name() }}" />
+    <meta name="msapplication-tooltip" content="{{ get_ctf_name() }}" />
+    <meta name="description" content="{{ ctf_description }}" />
+    <meta name="og:title" content="{{ self.title() }} - {{ get_ctf_name() }}" />
+    <meta name="og:site_name" content="{{ get_ctf_name() }}" />
+    <meta name="og:description" content="{{ ctf_description }}" /> {% if keywords %}
+    <meta name="keywords" content="{{ keywords }}" />{% endif %}
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+    <script src="/static/js/moment.min.js"></script>
+    <script src="/static/js/livestamp.min.js"></script>
+</head>
+
+<body>
+    <nav role="navigation" class="navbar navbar-inverse" id="navbar" style="margin: 0; border-radius: 0;">
+        {% include "navbar.html" %}
+    </nav>
+    <div style="min-height: 80vh;">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category or 'info' }}" style="margin: 0; border-radius: 0;">
+                        <div class="container">
+                            {{ message }}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <div style="margin-top: 20px;">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+    <div class="footer">
+        {% include "footer.html" %}
+    </div>
+</body>
+
+</html>
