@@ -1,5 +1,4 @@
 import random
-from string import hexdigits
 from urllib.parse import urljoin, urlparse
 
 from flask import redirect, request, url_for
@@ -20,7 +19,7 @@ class RequiredIf(Required):
             super(RequiredIf, self).__call__(form, field)
 
 
-def random_string(length=32, alpha=hexdigits):
+def random_string(length=32, alpha="012346789abcdef"):
     """ Generates a random string of length length using characters from alpha. """
     characters = [random.choice(alpha) for x in range(length)]
     return "".join(characters)

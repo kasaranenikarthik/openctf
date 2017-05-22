@@ -5,6 +5,7 @@ from wtforms.fields import *
 from wtforms.validators import *
 from wtforms_components import read_only
 
+from datetime import datetime
 from openctf.models import Config
 
 blueprint = Blueprint("admin", __name__, template_folder="templates")
@@ -39,16 +40,19 @@ def settings():
             if field.short_name == "public_key":
                 private_key, public_key = Config.get_ssh_keys()
                 field.data = public_key
-                continue
-            keys.append(field.short_name)
+            else:
+                keys.append(field.short_name)
         pairs = Config.get_many(keys)
         for field in settings_form:
             if field.short_name in ["csrf_token", "public_key"]:
                 continue
+            data = pairs.get(field.short_name)
             if field.short_name in ["allow_registrations"]:
-                field.data = int(pairs.get(field.short_name))
-                continue
-            field.data = pairs.get(field.short_name)
+                field.data = int(data)
+            elif field.short_name in ["start_time", "end_time"] and data:
+                field.data = datetime.strptime(data, "%Y-%m-%d %H:%M:%S")
+            else:
+                field.data = data
     return render_template("admin/settings.html", settings_form=settings_form)
 
 
@@ -61,8 +65,8 @@ class SettingsForm(FlaskForm):
     require_email_verification = BooleanField("Require email verification")
     mailgun_domain = TextField("Mailgun Domain", validators=[])
 
-    start_time = IntegerField("Start Time", validators=[InputRequired("Please enter a CTF start time.")])
-    end_time = IntegerField("End Time", validators=[InputRequired("Please enter a CTF end time.")])
+    start_time = DateTimeField("Start Time", validators=[InputRequired("Please enter a CTF start time.")])
+    end_time = DateTimeField("End Time", validators=[InputRequired("Please enter a CTF end time.")])
 
     webhook_secret = StringField("Webhook Secret", validators=[Optional()])
     public_key = StringField("Public Key", validators=[Optional()])

@@ -5,6 +5,7 @@ from flask_wtf import FlaskForm
 from wtforms import ValidationError
 from wtforms.fields import *
 from wtforms.validators import *
+from datetime import datetime, timedelta
 
 from openctf.config import (generate_verification_token, get_ctf_name,
                             setup_complete)
@@ -43,6 +44,9 @@ def setup():
         to_update.update(allow_registrations=0)
         to_update.update(require_email_verification=0)
         to_update.update(setup_complete=1)
+        now = datetime.now()
+        to_update.update(start_time=(now + timedelta(hours=1)).strftime("%Y-%m-%d %H:%M:%S"))
+        to_update.update(end_time=(now + timedelta(hours=5)).strftime("%Y-%m-%d %H:%M:%S"))
         Config.set_many(to_update)
         cache.delete_memoized(get_ctf_name)
         cache.delete_memoized(setup_complete)
