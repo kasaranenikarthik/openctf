@@ -6,6 +6,7 @@ services:
     expose: [ 3306 ]
     image: mariadb:latest
     networks: [ database ]
+    volumes: [ "./db/conf.d:/etc/mysql/conf.d" ]
   redis:
     env_file: .env
     expose: [ 6379 ]

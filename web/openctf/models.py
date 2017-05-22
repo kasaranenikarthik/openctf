@@ -1,4 +1,5 @@
 from datetime import datetime
+from Crypto.PublicKey import RSA
 
 from flask_sqlalchemy import SQLAlchemy
 from passlib.hash import bcrypt
@@ -51,6 +52,15 @@ class Config(db.Model):
         return config.value
 
     @classmethod
+    def get_many(cls, keys):
+        pairs = dict()
+        configs = list(cls.query.all())
+        for config in configs:
+            if config.key in keys:
+                pairs[config.key] = config.value
+        return pairs
+
+    @classmethod
     def set(cls, key, value):
         """ Set a value in the configuration table. """
         config = cls.query.filter_by(key=key).first()
@@ -70,6 +80,21 @@ class Config(db.Model):
             config.value = str(value)
             db.session.add(config)
         db.session.commit()
+
+    @classmethod
+    def get_ssh_keys(cls):
+        pairs = cls.get_many(["private_key", "public_key"])
+        private_key = pairs.get("private_key")
+        public_key = pairs.get("public_key")
+        if not (private_key and public_key):
+            key = RSA.generate(2048)
+            private_key = key.exportKey("PEM").decode("utf-8")
+            public_key = key.publickey().exportKey("OpenSSH").decode("utf-8")
+            cls.set_many(dict(
+                private_key=private_key,
+                public_key=public_key
+            ))
+        return private_key, public_key
 
 
 class Solve(db.Model):

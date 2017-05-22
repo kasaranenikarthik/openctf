@@ -21,7 +21,7 @@ passlib
 paramiko
 pathlib
 pillow
-pycrypto
+git+git://github.com/iptq/pycrypto
 pyqrcode
 pytest
 pyyaml
