@@ -7,6 +7,7 @@ from wtforms_components import read_only
 
 from datetime import datetime
 from openctf.models import Config
+from openctf.util import RequiredIf
 
 blueprint = Blueprint("admin", __name__, template_folder="templates")
 
@@ -47,7 +48,7 @@ def settings():
             if field.short_name in ["csrf_token", "public_key"]:
                 continue
             data = pairs.get(field.short_name)
-            if field.short_name in ["allow_registrations"]:
+            if field.short_name in ["allow_registrations", "require_email_verification"]:
                 field.data = int(data)
             elif field.short_name in ["start_time", "end_time"] and data:
                 field.data = datetime.strptime(data, "%Y-%m-%d %H:%M:%S")
@@ -63,7 +64,8 @@ class SettingsForm(FlaskForm):
 
     allow_registrations = BooleanField("Allow Registrations")
     require_email_verification = BooleanField("Require email verification")
-    mailgun_domain = TextField("Mailgun Domain", validators=[])
+    mailgun_domain = TextField("Mailgun Domain", validators=[RequiredIf("require_email_verification")])
+    mailgun_apikey = TextField("Mailgun API Key", validators=[RequiredIf("require_email_verification")])
 
     start_time = DateTimeField("Start Time", validators=[InputRequired("Please enter a CTF start time.")])
     end_time = DateTimeField("End Time", validators=[InputRequired("Please enter a CTF end time.")])
