@@ -42,10 +42,15 @@ def logout():
     return redirect(url_for("base.index"))
 
 
-@blueprint.route("/profile", methods=["GET", "POST"])
-@login_required
-def profile():
-    return "profile"
+@blueprint.route("/profile")
+@blueprint.route("/profile/<int:id>")
+def profile(id=None):
+    if id is None and current_user.is_authenticated:
+        return redirect(url_for("users.profile", id=current_user.id))
+    user = User.get_by_id(id)
+    if user is None:
+        abort(404)
+    return render_template("users/profile.html", user=user)
 
 
 @blueprint.route("/register", methods=["GET", "POST"])

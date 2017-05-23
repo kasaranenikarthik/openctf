@@ -20,6 +20,9 @@ class Config(object):
         self.CACHE_TYPE = "redis"
         self.CACHE_REDIS_HOST = "redis"
 
+        self.CELERY_BROKER_URL = "redis://redis:6379/0"
+        self.CELERY_RESULT_BACKEND = "redis://redis:6379/0"
+
         self.SECRET_KEY = self._get_secret_key()
         self.SQLALCHEMY_DATABASE_URI = Config.get_database_url()
         self.SQLALCHEMY_TRACK_MODIFICATIONS = True

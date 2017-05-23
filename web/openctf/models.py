@@ -1,11 +1,14 @@
 from datetime import datetime
-from Crypto.PublicKey import RSA
+from io import BytesIO
 
+import requests
+from Crypto.PublicKey import RSA
 from flask_sqlalchemy import SQLAlchemy
 from passlib.hash import bcrypt
 from sqlalchemy.ext.hybrid import hybrid_property
 
 from openctf.extensions import login_manager
+from openctf.util import generate_identicon
 
 db = SQLAlchemy()
 
@@ -150,6 +153,22 @@ class User(db.Model):
 
     team = db.relationship("Team", back_populates="members")
     solves = db.relationship("Solve", back_populates="user", lazy="subquery")
+
+    @property
+    def avatar(self):
+        if not self._avatar:
+            avatar_file = BytesIO()
+            avatar = generate_identicon(self.email)
+            avatar.save(avatar_file, format="PNG")
+            avatar_file.seek(0)
+            response = requests.post("http://filestore:8000/save",
+                                     data={"prefix": "avatar"},
+                                     files={"file": avatar_file})
+            if response.status_code == 200:
+                self._avatar = "/static/%s" % response.text
+                db.session.add(self)
+                db.session.commit()
+        return self._avatar
 
     def __repr__(self):
         return "User:{}".format(self.id)

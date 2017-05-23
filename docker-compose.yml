@@ -1,27 +1,65 @@
-version: '2'
+version: "2"
 
 services:
+  consul:
+    command: -bootstrap
+    image: gliderlabs/consul-server:latest
+    networks: [ lbalancer ]
+    ports: [ "8300:8300", "8400:8400", "8500:8500", "8600:53/udp" ]
+    restart: always
   db:
     env_file: .env
     expose: [ 3306 ]
     image: mariadb:latest
     networks: [ database ]
     volumes: [ "./db/conf.d:/etc/mysql/conf.d" ]
+  filestore:
+    build: filestore
+    env_file: .env
+    expose: [ 80, 8000 ]
+    networks: [ filestore, nginx ]
+    restart: always
+  nginx:
+    build: nginx
+    networks: [ lbalancer, nginx ]
+    ports: [ "80:80", "443:443" ]
+    restart: always
   redis:
     env_file: .env
     expose: [ 6379 ]
     image: redis:latest
     networks: [ redis ]
+  registrator:
+    command: -internal -resync 600 consul://consul:8500
+    image: gliderlabs/registrator:master
+    networks: [ lbalancer ]
+    restart: always
+    volumes: [ "/var/run/docker.sock:/tmp/docker.sock" ]
   web:
     build: web
+    environment:
+      SERVICE_NAME: openctf
+      SERVICE_TAGS: platform
     env_file: .env
-    networks: [ database, redis ]
-    ports: [ "80:80" ]
+    networks: [ database, filestore, lbalancer, nginx, redis ]
+    expose: [ 80 ]
     restart: always
     volumes: [ "./web:/openctf" ]
+  worker:
+    build: web
+    entrypoint: [ "/openctf/start.sh", "worker" ]
+    env_file: .env
+    restart: always
+    networks: [ database, filestore, redis ]
 
 networks:
   database:
+    driver: bridge
+  filestore:
+    driver: bridge
+  lbalancer:
+    driver: bridge
+  nginx:
     driver: bridge
   redis:
     driver: bridge
