@@ -6,6 +6,9 @@
 *.pyc
 __pycache__
 
+# Data
+.data
+
 # IDE stuff.
 .vscode
 .idea

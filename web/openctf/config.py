@@ -88,3 +88,9 @@ def get_ctf_name():
 def get_require_email_verification():
     value = _Config.get("require_email_verification", 0)
     return bool(int(value))
+
+
+@cache.memoize()
+def get_allow_registrations():
+    value = _Config.get("allow_registrations", 0)
+    return bool(int(value))

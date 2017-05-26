@@ -1,7 +1,8 @@
 from flask import Flask, redirect, request, url_for
 
 import openctf.views as views
-from openctf.config import Config, get_ctf_name, setup_complete
+from openctf.config import (Config, get_allow_registrations, get_ctf_name,
+                            setup_complete)
 from openctf.extensions import cache, login_manager, make_celery
 from openctf.models import db
 
@@ -24,6 +25,7 @@ def create_app(config=None, name=__name__):
 
         # inject jinja variables
         app.jinja_env.globals.update(get_ctf_name=get_ctf_name)
+        app.jinja_env.globals.update(get_allow_registrations=get_allow_registrations)
 
         # configure extensions
         cache.init_app(app)

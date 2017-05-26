@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from flask import Blueprint, flash, redirect, render_template, url_for
 from flask_wtf import FlaskForm
 from wtforms import ValidationError
@@ -5,7 +7,9 @@ from wtforms.fields import *
 from wtforms.validators import *
 from wtforms_components import read_only
 
-from datetime import datetime
+from openctf.config import (get_allow_registrations, get_ctf_name,
+                            get_require_email_verification)
+from openctf.extensions import cache
 from openctf.models import Config
 from openctf.util import RequiredIf
 
@@ -31,6 +35,9 @@ def settings():
                 data = int(data)
             pairs[field.short_name] = data
         Config.set_many(pairs)
+        cache.delete_memoized(get_ctf_name)
+        cache.delete_memoized(get_allow_registrations)
+        cache.delete_memoized(get_require_email_verification)
         flash("Settings saved!", "success")
         return redirect(url_for("admin.settings"))
     else:
