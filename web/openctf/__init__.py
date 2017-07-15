@@ -15,6 +15,10 @@ def create_app(config=None, name=__name__):
         # import config
         app.config.from_object(config)
 
+        # inject jinja variables
+        app.jinja_env.globals.update(get_ctf_name=get_ctf_name)
+        app.jinja_env.globals.update(get_allow_registrations=get_allow_registrations)
+
         # setup handler
         @app.before_request
         def check_setup_completed():
@@ -22,10 +26,6 @@ def create_app(config=None, name=__name__):
                 return
             if not setup_complete() and request.path != url_for("base.setup"):
                 return redirect(url_for("base.setup"))
-
-        # inject jinja variables
-        app.jinja_env.globals.update(get_ctf_name=get_ctf_name)
-        app.jinja_env.globals.update(get_allow_registrations=get_allow_registrations)
 
         # configure extensions
         cache.init_app(app)
