@@ -18,6 +18,7 @@ class Config(object):
             self.app_root = pathlib.Path(app_root)
 
         self.FILESTORE_URL = os.getenv("FILESTORE_URL", "http://filestore:7910")
+        self.FILESTORE_STATIC_HOST = os.getenv("FILESTORE_STATIC_HOST", "")
 
         self.CACHE_TYPE = "redis"
         self.CACHE_REDIS_URL = os.getenv("CACHE_REDIS_URL", "redis://redis:6379/cache")

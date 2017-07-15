@@ -169,7 +169,7 @@ class User(db.Model):
                 self._avatar = "/static/%s" % response.text
                 db.session.add(self)
                 db.session.commit()
-        return self._avatar
+        return current_app.config["FILESTORE_STATIC_HOST"] + self._avatar
 
     def __repr__(self):
         return "User:{}".format(self.id)
