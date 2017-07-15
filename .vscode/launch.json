@@ -1,0 +1,30 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "OpenCTF (Debug)",
+            "type": "python",
+            "request": "launch",
+            "cwd": "${workspaceRoot}/web",
+            "stopOnEntry": false,
+            "pythonPath": "${workspaceRoot}/web/.virtualenv/bin/python3",
+            "program": "${workspaceRoot}/web/manage.py",
+            "args": [
+                "runserver"
+            ],
+            "env": {
+                "DATABASE_URL": "mysql://root:@localhost/openctf_debug",
+                "FILESTORE_URL": "http://localhost:7910",
+                "OPENCTF_PORT": "8000",
+                "CACHE_REDIS_URL": "redis://localhost:6379/cache",
+                "CELERY_REDIS_URL": "redis://localhost:6379/celery",
+                "SECRET_KEY": "elephant"
+            },
+            "debugOptions": [
+                "WaitOnAbnormalExit",
+                "WaitOnNormalExit",
+                "RedirectOutput"
+            ]
+        }
+    ]
+}

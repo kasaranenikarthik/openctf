@@ -1,3 +1,7 @@
+#!/usr/bin/env python3
+
+import os
+
 from celery.bin.celery import main as celery_main
 from flask_migrate import Migrate, MigrateCommand
 from flask_script import Command, Manager, Server
@@ -11,7 +15,8 @@ manager = Manager(app)
 migrate = Migrate(app, db)
 manager.add_command("db", MigrateCommand)
 
-ServerCommand = Server(host="0.0.0.0", port=80, use_debugger=True, use_reloader=True)
+port = int(os.getenv("OPENCTF_PORT", "80"))
+ServerCommand = Server(host="0.0.0.0", port=port, use_debugger=True, use_reloader=True)
 manager.add_command("runserver", ServerCommand)
 
 

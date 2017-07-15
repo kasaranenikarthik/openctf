@@ -17,11 +17,13 @@ class Config(object):
         else:
             self.app_root = pathlib.Path(app_root)
 
-        self.CACHE_TYPE = "redis"
-        self.CACHE_REDIS_HOST = "redis"
+        self.FILESTORE_URL = os.getenv("FILESTORE_URL", "http://filestore:7910")
 
-        self.CELERY_BROKER_URL = "redis://redis:6379/0"
-        self.CELERY_RESULT_BACKEND = "redis://redis:6379/0"
+        self.CACHE_TYPE = "redis"
+        self.CACHE_REDIS_URL = os.getenv("CACHE_REDIS_URL", "redis://redis:6379/cache")
+
+        self.CELERY_BROKER_URL = os.getenv("CELERY_REDIS_URL", "redis://redis:6379/celery")
+        self.CELERY_RESULT_BACKEND = os.getenv("CELERY_REDIS_URL", "redis://redis:6379/celery")
 
         self.SECRET_KEY = self._get_secret_key()
         self.SQLALCHEMY_DATABASE_URI = Config.get_database_url()
@@ -34,18 +36,21 @@ class Config(object):
         if "SECRET_KEY" in os.environ:
             return os.environ["SECRET_KEY"]
         else:
-            secret_path = self.app_root / ".secret_key"
-            if not os.path.exists(secret_path):
-                open(secret_path, "w").close()
-            with secret_path.open("rb+") as secret_file:
-                secret_file.seek(0)
-                contents = secret_file.read()
-                if not contents and len(contents) == 0:
-                    key = os.urandom(128)
-                    secret_file.write(key)
-                    secret_file.flush()
-                else:
-                    key = contents
+            key = os.urandom(128)
+            try:
+                secret_path = self.app_root / ".secret_key"
+                if not os.path.exists(str(secret_path)):
+                    open(secret_path, "w").close()
+                with secret_path.open("rb+") as secret_file:
+                    secret_file.seek(0)
+                    contents = secret_file.read()
+                    if not contents and len(contents) == 0:
+                        secret_file.write(key)
+                        secret_file.flush()
+                    else:
+                        key = contents
+            except:
+                print("Could not write secret key. The current secret key will expire at the end of the session.")
         return key
 
     @staticmethod

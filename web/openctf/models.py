@@ -3,6 +3,7 @@ from io import BytesIO
 
 import requests
 from Crypto.PublicKey import RSA
+from flask import current_app
 from flask_sqlalchemy import SQLAlchemy
 from passlib.hash import bcrypt
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -161,7 +162,7 @@ class User(db.Model):
             avatar = generate_identicon(self.email)
             avatar.save(avatar_file, format="PNG")
             avatar_file.seek(0)
-            response = requests.post("http://filestore:8000/save",
+            response = requests.post(current_app.config["FILESTORE_URL"] + "/save",
                                      data={"prefix": "avatar"},
                                      files={"file": avatar_file})
             if response.status_code == 200:
