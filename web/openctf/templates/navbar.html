@@ -35,7 +35,7 @@
                         </ul>
                     </li>
                 {% else %}
-                    {% if get_allowed_registrations() %}
+                    {% if get_allow_registrations() %}
                         <li><a href="{{ url_for('users.register') }}">Register</a></li>
                         <li><a href="{{ url_for('users.login') }}">Login</a></li>
                     {% endif %}
