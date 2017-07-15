@@ -10,6 +10,7 @@ from wtforms_components import read_only
 from openctf.config import (get_allow_registrations, get_ctf_name,
                             get_require_email_verification)
 from openctf.extensions import cache
+from openctf.decorators import admin_required
 from openctf.models import Config
 from openctf.util import RequiredIf
 
@@ -17,11 +18,13 @@ blueprint = Blueprint("admin", __name__, template_folder="templates")
 
 
 @blueprint.route("/")
+@admin_required
 def index():
     return "overview"
 
 
 @blueprint.route("/settings", methods=["GET", "POST"])
+@admin_required
 def settings():
     settings_form = SettingsForm()
     read_only(settings_form.public_key)
