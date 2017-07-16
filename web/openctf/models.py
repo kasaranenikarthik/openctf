@@ -1,3 +1,4 @@
+import time
 from datetime import datetime
 from io import BytesIO
 
@@ -8,7 +9,7 @@ from flask_sqlalchemy import SQLAlchemy
 from passlib.hash import bcrypt
 from sqlalchemy.ext.hybrid import hybrid_property
 
-from openctf.extensions import login_manager
+from openctf.extensions import celery, login_manager
 from openctf.util import generate_identicon
 
 db = SQLAlchemy()
@@ -107,7 +108,7 @@ class Solve(db.Model):
     pid = db.Column(db.Integer, db.ForeignKey("challenges.id"), index=True)
     tid = db.Column(db.Integer, db.ForeignKey("teams.id"), index=True)
     uid = db.Column(db.Integer, db.ForeignKey("users.id"), index=True)
-    _date = db.Column("date", db.DateTime, default=datetime.utcnow)
+    _date = db.Column("date", db.DateTime, default=datetime.now)
     correct = db.Column(db.Boolean)
     flag = db.Column(db.Text)
 
@@ -144,7 +145,7 @@ class User(db.Model):
     _password = db.Column("password", db.String(128))
     admin = db.Column(db.Boolean, default=False)
     level = db.Column(db.Integer)
-    _register_time = db.Column("register_time", db.DateTime, default=datetime.utcnow)
+    _register_time = db.Column("register_time", db.DateTime, default=datetime.now)
     reset_token = db.Column(db.String(32))
     otp_secret = db.Column(db.String(16))
     otp_confirmed = db.Column(db.Boolean, default=False)
@@ -152,7 +153,7 @@ class User(db.Model):
     email_verified = db.Column(db.Boolean, default=False)
     _avatar = db.Column("avatar", db.String(128))
 
-    team = db.relationship("Team", back_populates="members")
+    team = db.relationship("Team", back_populates="members", lazy="subquery")
     solves = db.relationship("Solve", back_populates="user", lazy="subquery")
 
     @property
@@ -170,6 +171,14 @@ class User(db.Model):
                 db.session.add(self)
                 db.session.commit()
         return current_app.config["FILESTORE_STATIC_HOST"] + self._avatar
+
+    @hybrid_property
+    def register_time(self):
+        return int(time.mktime(self._register_time.timetuple()))
+
+    @property
+    def account_type(self):
+        return ["Administrator", "Student", "Observer", "Teacher"][self.level]
 
     def __repr__(self):
         return "User:{}".format(self.id)

@@ -1,4 +1,4 @@
-{% from "templates.html" import flashes %}
+{% from "templates.j2" import flashes %}
 
 <!DOCTYPE html>
 <html>
@@ -23,7 +23,7 @@
 
 <body>
     <nav role="navigation" class="navbar navbar-default" id="navbar" style="margin: 0; border-radius: 0;">
-        {% include "navbar.html" %}
+        {% include "navbar.j2" %}
     </nav>
     <div style="min-height: 80vh;">
         {% with messages = get_flashed_messages(with_categories=true) %}
@@ -42,7 +42,7 @@
         </div>
     </div>
     <div class="footer">
-        {% include "footer.html" %}
+        {% include "footer.j2" %}
     </div>
 </body>
 

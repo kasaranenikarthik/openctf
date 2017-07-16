@@ -64,7 +64,7 @@ def settings():
                 field.data = datetime.strptime(data, "%Y-%m-%d %H:%M:%S")
             else:
                 field.data = data
-    return render_template("admin/settings.html", settings_form=settings_form)
+    return render_template("admin/settings.j2", settings_form=settings_form)
 
 
 class SettingsForm(FlaskForm):

@@ -19,7 +19,7 @@ blueprint = Blueprint("base", __name__, template_folder="templates")
 
 @blueprint.route("/")
 def index():
-    return render_template("base/index.html")
+    return render_template("base/index.j2")
 
 
 @blueprint.route("/setup", methods=["GET", "POST"])
@@ -51,7 +51,7 @@ def setup():
         cache.delete_memoized(get_ctf_name)
         cache.delete_memoized(setup_complete)
         return redirect(url_for("base.index"))
-    return render_template("base/setup.html", setup_form=setup_form)
+    return render_template("base/setup.j2", setup_form=setup_form)
 
 
 class SetupForm(FlaskForm):

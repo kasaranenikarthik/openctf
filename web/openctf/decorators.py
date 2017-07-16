@@ -3,6 +3,7 @@ from flask_login import current_user
 
 from functools import wraps
 
+
 def admin_required(f):
     """
     Only allows users with admin privileges to access the endpoint that

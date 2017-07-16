@@ -1,10 +1,14 @@
 import hashlib
 import random
+import re
 from urllib.parse import urljoin, urlparse
 
 from flask import redirect, request, url_for
 from PIL import Image, ImageDraw
 from wtforms.validators import Required
+
+VALID_USERNAME = re.compile(r"^[A-Za-z_][A-Za-z\d_]*$")
+VALID_PROBLEM_NAME = re.compile(r"^[a-z_][a-z\-\d_]*$")
 
 
 class RequiredIf(Required):
@@ -72,16 +76,13 @@ def generate_identicon(email):
         s1.append(b)
         s1.append(b + h % 1 * s)
         s1.append(b + s)
-
         return [
             s1[~~h % 6], s1[(h | 16) % 6], s1[(h | 8) % 6]
         ]
-
     rgb = hsl2rgb(int(h[-7:], 16) & 0xfffffff, 0.5, 0.7)
     bg = (255, 255, 255)
     fg = (int(rgb[0] * 255), int(rgb[1] * 255), int(rgb[2] * 255))
     draw.rectangle([(0, 0), (size, size)], fill=bg)
-
     for i in range(15):
         c = bg if int(h[i], 16) % 2 == 1 else fg
         if i < 5:
@@ -92,5 +93,4 @@ def generate_identicon(email):
         elif i < 15:
             draw.rectangle([(0 * cell + margin, (i - 10) * cell + margin), (1 * cell + margin, (i - 9) * cell + margin)], fill=c)
             draw.rectangle([(4 * cell + margin, (i - 10) * cell + margin), (5 * cell + margin, (i - 9) * cell + margin)], fill=c)
-
     return image

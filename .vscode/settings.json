@@ -1,0 +1,15 @@
+// Place your settings in this file to overwrite default and user settings.
+{
+    "python.autoComplete.extraPaths": [
+        "web/.virtualenv/lib/python3.5",
+        "web/.virtualenv/lib/python3.5/site-packages"
+    ],
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/.virtualenv": true
+    }
+}

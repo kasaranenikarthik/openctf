@@ -1,6 +1,8 @@
+from celery import Celery
 from flask_cache import Cache
 from flask_login import LoginManager
-from celery import Celery
+
+from openctf.tasks import create_tasks
 
 cache = Cache()
 celery = None
@@ -23,4 +25,5 @@ def make_celery(app):
             with app.app_context():
                 return TaskBase.__call__(self, *args, **kwargs)
     celery.Task = ContextTask
+    create_tasks(celery)
     return celery

@@ -21,10 +21,10 @@ class Config(object):
         self.FILESTORE_STATIC_HOST = os.getenv("FILESTORE_STATIC_HOST", "")
 
         self.CACHE_TYPE = "redis"
-        self.CACHE_REDIS_URL = os.getenv("CACHE_REDIS_URL", "redis://redis:6379/cache")
+        self.CACHE_REDIS_URL = os.getenv("CACHE_REDIS_URL", "redis://redis:6379/0")
 
-        self.CELERY_BROKER_URL = os.getenv("CELERY_REDIS_URL", "redis://redis:6379/celery")
-        self.CELERY_RESULT_BACKEND = os.getenv("CELERY_REDIS_URL", "redis://redis:6379/celery")
+        self.CELERY_BROKER_URL = os.getenv("CELERY_REDIS_URL", "redis://redis:6379/1")
+        self.CELERY_RESULT_BACKEND = os.getenv("CELERY_REDIS_URL", "redis://redis:6379/1")
 
         self.SECRET_KEY = self._get_secret_key()
         self.SQLALCHEMY_DATABASE_URI = Config.get_database_url()

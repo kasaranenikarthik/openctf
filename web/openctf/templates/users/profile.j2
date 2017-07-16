@@ -1,5 +1,5 @@
-{% from "templates.html" import render_field %}
-{% extends "layout.html" %}
+{% from "templates.j2" import render_field %}
+{% extends "layout.j2" %}
 {% block title %}{{ user.name }} (@{{ user.username }}){% endblock %}
 
 {% block content %}
@@ -19,7 +19,7 @@
                             <hr/>
                             <div>
                                 <i class="fa fa-fw fa-user"></i>
-                                {{ user.type }}
+                                {{ user.account_type }}
                             </div>
                             {% if user == current_user and user.email %}
                                 <div data-toggle="tooltip" data-placement="top" title="Only visible to you.">

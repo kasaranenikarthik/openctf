@@ -17,8 +17,8 @@
                 "FILESTORE_STATIC_HOST": "http://localhost:7910",
                 "FILESTORE_URL": "http://localhost:7910",
                 "OPENCTF_PORT": "8000",
-                "CACHE_REDIS_URL": "redis://localhost:6379/cache",
-                "CELERY_REDIS_URL": "redis://localhost:6379/celery",
+                "CACHE_REDIS_URL": "redis://localhost:6379/0",
+                "CELERY_REDIS_URL": "redis://localhost:6379/1",
                 "SECRET_KEY": "elephant"
             },
             "debugOptions": [
