@@ -97,8 +97,8 @@ def generate_identicon(email):
 
 
 def generate_team_link(team):
-    return "<a href=\"/teams/profile/{}\">{}</a>".format(team.id, team.teamname)
+    return "<a href=\"{}\">{}</a>".format(url_for("teams.profile", tid=team.id), team.teamname)
 
 
 def generate_user_link(user):
-    return "<a href=\"/users/profile/{}\">{}</a>".format(user.id, user.username)
+    return "<a href=\"{}\">{}</a>".format(url_for("users.profile", uid=user.id), user.username)
