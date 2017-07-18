@@ -195,7 +195,7 @@ class User(db.Model):
 
     team = db.relationship("Team", back_populates="members", lazy="subquery")
     solves = db.relationship("Solve", back_populates="user", lazy="subquery")
-    activity = db.relationship("Activity", back_populates="user", lazy="subquery")
+    activity = db.relationship("Activity", back_populates="user", order_by="desc(Activity._timestamp)")
 
     @property
     def avatar(self):
