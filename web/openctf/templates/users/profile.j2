@@ -41,8 +41,8 @@
                     <ul class="nav nav-tabs" role="tablist">
                         <li role="presentation" class="active">
                             <a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Profile</a></li>
-                        <!--<li role="presentation">
-                            <a href="#activity" aria-controls="activity" role="tab" data-toggle="tab">Activity</a></li>-->
+                        <li role="presentation">
+                            <a href="#activity" aria-controls="activity" role="tab" data-toggle="tab">Activity</a></li>
                         {% if user == current_user %}
                             <a href="{{ url_for('users.settings') }}" class="btn btn-primary" style="float:right;">
                                 <i class="fa fa-fw fa-pencil"></i> Edit Profile
@@ -86,13 +86,16 @@
                                 </div>
                             </div>
                         </div>
-                        <!--<div role="tabpanel" class="tab-pane" id="activity">
+                        <div role="tabpanel" class="tab-pane" id="activity">
                             <div class="panel panel-default">
                                 <div class="panel-body">
-                                    activity panel
+                                    {% for activity in user.activity %}
+                                    {{ activity }} <small><time data-livestamp="{{ activity.timestamp }}"></time></small>
+                                    <br>
+                                    {% endfor %}
                                 </div>
                             </div>
-                        </div>-->
+                        </div>
                     </div>
                 </div>
             </div>

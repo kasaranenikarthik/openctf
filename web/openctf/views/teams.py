@@ -5,7 +5,7 @@ from sqlalchemy import func
 from wtforms.fields import StringField, SubmitField
 from wtforms.validators import InputRequired, Length, ValidationError
 
-from openctf.models import db, Team
+from openctf.models import db, Activity, Team
 
 blueprint = Blueprint("teams", __name__, template_folder="templates")
 
@@ -34,6 +34,10 @@ def create_team(form):
     current_user.tid = new_team.id
     form.populate_obj(current_user.team)
     db.session.add(current_user)
+    db.session.commit()
+
+    activity = Activity(uid=current_user.id, tid=new_team.id, _type=Activity.CREATED_TEAM)
+    db.session.add(activity)
     db.session.commit()
     return new_team
 

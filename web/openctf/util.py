@@ -94,3 +94,11 @@ def generate_identicon(email):
             draw.rectangle([(0 * cell + margin, (i - 10) * cell + margin), (1 * cell + margin, (i - 9) * cell + margin)], fill=c)
             draw.rectangle([(4 * cell + margin, (i - 10) * cell + margin), (5 * cell + margin, (i - 9) * cell + margin)], fill=c)
     return image
+
+
+def generate_team_link(team):
+    return "<a href=\"/teams/profile/{}\">{}</a>".format(team.id, team.teamname)
+
+
+def generate_user_link(user):
+    return "<a href=\"/users/profile/{}\">{}</a>".format(user.id, user.username)

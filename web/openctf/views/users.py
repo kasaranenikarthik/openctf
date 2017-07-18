@@ -7,7 +7,7 @@ from wtforms.fields import *
 from wtforms.validators import *
 
 from openctf.config import get_require_email_verification
-from openctf.models import User, db
+from openctf.models import Activity, User, db
 from openctf.util import (VALID_USERNAME, get_redirect_target, random_string,
                           redirect_back)
 
@@ -83,6 +83,10 @@ def register_user(name, email, username, password, level, admin=False, send_emai
     if send_email:
         send_verification_email(username, email, url_for("users.verify", code=code, _external=True))
     db.session.add(new_user)
+    db.session.commit()
+
+    activity = Activity(uid=new_user.id, _type=Activity.REGISTERED)
+    db.session.add(activity)
     db.session.commit()
     return new_user
 
