@@ -36,6 +36,7 @@ def create_app(config=None, name=__name__):
         # register blueprints
         app.register_blueprint(views.admin.blueprint, url_prefix="/admin")
         app.register_blueprint(views.base.blueprint)
+        app.register_blueprint(views.teams.blueprint, url_prefix="/teams")
         app.register_blueprint(views.users.blueprint, url_prefix="/users")
 
         return app

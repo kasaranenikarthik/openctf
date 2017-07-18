@@ -126,7 +126,7 @@ class Team(db.Model):
     teamname = db.Column(db.Unicode(32), unique=True)
     affiliation = db.Column(db.Unicode(48))
     captain = db.Column(db.Integer)
-    banned = db.Column(db.Boolean)
+    banned = db.Column(db.Boolean, default=False)
 
     members = db.relationship("User", back_populates="team")
     solves = db.relationship("Solve", back_populates="team", lazy="subquery")

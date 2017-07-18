@@ -1,1 +1,1 @@
-from openctf.views import admin, base, users
+from openctf.views import admin, base, teams, users

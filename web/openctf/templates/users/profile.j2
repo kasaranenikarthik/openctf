@@ -60,6 +60,9 @@
                                         {% if not user.team %}
                                             <div class="panel-body">
                                                 <b>{{ user.name }}</b> is not a part of a team.
+                                                <a href="{{ url_for('teams.create') }}" class="btn btn-primary">
+                                                    <i class="fa fa-fw fa-pencil"></i> Create or Join Team
+                                                </a>
                                             </div>
                                         {% else %}
                                             <table class="table table-bordered">
@@ -70,8 +73,8 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <th>School</th>
-                                                    <td>{{ user.team.school }}</td>
+                                                    <th>Affiliation</th>
+                                                    <td>{{ user.team.affiliation }}</td>
                                                 </tr>
                                                 {# <tr>
                                                     <th>Place</th>
