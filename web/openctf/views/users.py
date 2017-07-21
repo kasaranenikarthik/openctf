@@ -1,8 +1,12 @@
+import io
 import string
 
-from flask import Blueprint, flash, redirect, render_template, url_for
+import requests
+
+from flask import Blueprint, current_app, flash, redirect, render_template, url_for
 from flask_login import current_user, login_required, login_user, logout_user
 from flask_wtf import FlaskForm
+from PIL import Image
 from sqlalchemy import func
 from wtforms import ValidationError
 from wtforms.fields import *
@@ -79,7 +83,42 @@ def register():
 
 @blueprint.route("/settings", methods=["GET", "POST"])
 def settings():
-    return "settings"
+    change_password_form = ChangePasswordForm(prefix="change-password")
+    profile_edit_form = ProfileEditForm(prefix="profile-edit")
+
+    if change_password_form.submit.data and change_password_form.validate_on_submit():
+        current_user.password = change_password_form.password.data
+        db.session.add(current_user)
+        db.session.commit()
+        flash("Password changed.", "success")
+        return redirect(url_for("users.settings"))
+
+    if profile_edit_form.validate_on_submit() and profile_edit_form.submit.data:
+        for field in profile_edit_form:
+            if field.short_name == "avatar":
+                if len(field.data.read()) > 0:
+                    field.data.seek(0)
+                    response = requests.post("{}/save".format(current_app.config["FILESTORE_URL"]),
+                                             data={"prefix": "avatar"},
+                                             files={"file": field.data})
+                    if response.status_code == 200:
+                        current_user._avatar = "/static/{}".format(response.text)
+                continue
+            if hasattr(current_user, field.short_name):
+                setattr(current_user, field.short_name, field.data)
+        if profile_edit_form.remove_avatar.data:
+            current_user._avatar = None
+        db.session.add(current_user)
+        db.session.commit()
+        flash("Profile updated.", "success")
+        return redirect(url_for("users.settings"))
+    else:
+        for field in profile_edit_form:
+            if hasattr(current_user, field.short_name):
+                field.data = getattr(current_user, field.short_name, "")
+    return render_template("users/settings.j2",
+                           change_password_form=change_password_form,
+                           profile_edit_form=profile_edit_form)
 
 
 @blueprint.route("/verify/<token>")
@@ -136,6 +175,21 @@ def send_verification_email(username, email, link):
         raise Exception(response["message"])
 
 
+class ChangePasswordForm(FlaskForm):
+    old_password = PasswordField("Old Password", validators=[
+        InputRequired("Please enter your old password.")])
+    password = PasswordField("Password", validators=[
+        InputRequired("Please enter a password.")])
+    confirm_password = PasswordField("Confirm Password", validators=[
+        InputRequired("Please confirm your password."),
+        EqualTo("password", "Please enter the same password.")])
+    submit = SubmitField("Update Password")
+
+    def validate_old_password(self, field):
+        if not current_user.check_password(field.data):
+            raise ValidationError("Old password doesn't match.")
+
+
 class LoginForm(FlaskForm):
     username = StringField("Username", validators=[InputRequired("Please enter your username.")])
     password = PasswordField("Password", validators=[InputRequired("Please enter your password.")])
@@ -178,3 +232,20 @@ class RegisterForm(FlaskForm):
     def validate_email(self, field):
         if User.query.filter(func.lower(User.email) == field.data.lower()).count():
             raise ValidationError("Email is taken.")
+
+
+class ProfileEditForm(FlaskForm):
+    name = StringField("Name",
+                       validators=[InputRequired("Please enter a name.")])
+    avatar = FileField("Avatar")
+    remove_avatar = BooleanField("Remove Avatar")
+    submit = SubmitField("Update Profile")
+
+    def validate_avatar(self, field):
+        try:
+            data = field.data.read()
+            if data:
+                field.data.seek(0)
+                Image.open(io.BytesIO(data))
+        except:
+            raise ValidationError("Please upload an image")
