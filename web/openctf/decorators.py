@@ -3,6 +3,8 @@ from flask_login import current_user
 
 from functools import wraps
 
+from openctf.models import Config
+
 
 def admin_required(f):
     """
@@ -21,6 +23,23 @@ def admin_required(f):
         return f(*args, **kwargs)
 
     return wrapper
+
+
+def login_required(f):
+    """
+    Only allows users who are logged in to access the endpoint that this
+    function is wrapping.
+
+    :param f: The function that is to be wrapped.
+    :return: The wrapped function.
+    """
+
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        if not (current_user.is_authenticated):
+            abort(403)
+        return f(*args, **kwargs)
+
 
 def team_required(f):
     """

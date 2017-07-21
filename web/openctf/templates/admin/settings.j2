@@ -43,8 +43,10 @@
                                         <div class="col-sm-12 form-group">
                                             {{ render_generic_field(settings_form.allow_registrations) }}
                                             {{ render_generic_field(settings_form.require_email_verification) }}
+                                            {{ render_field(settings_form.mailgun_email) }}
                                             {{ render_field(settings_form.mailgun_domain) }}
                                             {{ render_field(settings_form.mailgun_apikey) }}
+                                            {{ render_field(settings_form.email_body) }}
                                         </div>
                                     </div>
                                 </fieldset>

@@ -74,8 +74,10 @@ class SettingsForm(FlaskForm):
 
     allow_registrations = BooleanField("Allow Registrations")
     require_email_verification = BooleanField("Require email verification")
+    mailgun_email = TextField("Mailgun Email", validators=[RequiredIf("require_email_verification")])
     mailgun_domain = TextField("Mailgun Domain", validators=[RequiredIf("require_email_verification")])
     mailgun_apikey = TextField("Mailgun API Key", validators=[RequiredIf("require_email_verification")])
+    email_body = TextAreaField("Email Body", validators=[RequiredIf("require_email_verification")])
 
     start_time = DateTimeField("Start Time", validators=[InputRequired("Please enter a CTF start time.")])
     end_time = DateTimeField("End Time", validators=[InputRequired("Please enter a CTF end time.")])

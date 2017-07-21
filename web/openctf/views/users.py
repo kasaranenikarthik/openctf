@@ -1,3 +1,5 @@
+import string
+
 from flask import Blueprint, flash, redirect, render_template, url_for
 from flask_login import current_user, login_required, login_user, logout_user
 from flask_wtf import FlaskForm
@@ -7,9 +9,9 @@ from wtforms.fields import *
 from wtforms.validators import *
 
 from openctf.config import get_require_email_verification
-from openctf.models import Activity, User, db
+from openctf.models import Activity, Config, User, db
 from openctf.util import (VALID_USERNAME, get_redirect_target, random_string,
-                          redirect_back)
+                          redirect_back, send_email)
 
 blueprint = Blueprint("users", __name__, template_folder="templates")
 
@@ -58,12 +60,18 @@ def profile(id=None):
 def register():
     register_form = RegisterForm(prefix="register")
     if register_form.validate_on_submit():
+        send_email = get_require_email_verification()
         new_user = register_user(register_form.name.data,
                                  register_form.email.data,
                                  register_form.username.data,
                                  register_form.password.data,
                                  int(register_form.level.data),
-                                 send_email=False, admin=False)
+                                 send_email=send_email, admin=False)
+
+        if send_email:
+            flash("Check your email for an activation link.", "info")
+            return redirect(url_for("users.login"))
+
         login_user(new_user)
         return redirect(url_for("users.profile"))
     return render_template("users/register.j2", register_form=register_form)
@@ -74,6 +82,25 @@ def settings():
     return "settings"
 
 
+@blueprint.route("/verify/<token>")
+def verify(token):
+    user = User.query.filter_by(email_token=token).first()
+    if user:
+        if user.email_verified:
+            flash("Email is already verified.", "info")
+            return redirect(url_for("users.profile"))
+        if user.email_token == token:
+            user.email_verified = True
+            flash("Email has been verified!", "success")
+            db.session.add(user)
+            db.session.commit()
+            login_user(user)
+            return redirect(url_for("users.profile"))
+
+    flash("Invalid token.", "danger")
+    return redirect(url_for("users.login"))
+
+
 def register_user(name, email, username, password, level, admin=False, send_email=True, **kwargs):
     new_user = User(name=name, username=username, password=password, email=email, level=level, admin=admin)
     for key, value in kwargs.items():
@@ -81,7 +108,7 @@ def register_user(name, email, username, password, level, admin=False, send_emai
     code = random_string()
     new_user.email_token = code
     if send_email:
-        send_verification_email(username, email, url_for("users.verify", code=code, _external=True))
+        send_verification_email(username, email, url_for("users.verify", token=code, _external=True))
     db.session.add(new_user)
     db.session.commit()
 
@@ -89,6 +116,24 @@ def register_user(name, email, username, password, level, admin=False, send_emai
     db.session.add(activity)
     db.session.commit()
     return new_user
+
+
+def send_verification_email(username, email, link):
+    ctf_name = Config.get("ctf_name")
+    subject = "[ACTION REQUIRED] Email Verification - {}".format(ctf_name)
+    body = string.Template(Config.get("email_body")).substitute(
+        ctf_name=ctf_name,
+        link=link,
+        username=username,
+    )
+    response = send_email(email, subject, body)
+    if response.status_code != 200:
+        raise Exception("Failed: {}".format(response.text))
+    response = response.json()
+    if "Queued" in response["message"]:
+        return True
+    else:
+        raise Exception(response["message"])
 
 
 class LoginForm(FlaskForm):

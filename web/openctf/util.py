@@ -1,8 +1,10 @@
 import hashlib
 import random
 import re
+import string
 from urllib.parse import urljoin, urlparse
 
+import requests
 from flask import redirect, request, url_for
 from PIL import Image, ImageDraw
 from wtforms.validators import Required
@@ -102,3 +104,16 @@ def generate_team_link(team):
 
 def generate_user_link(user):
     return "<a href=\"{}\">{}</a>".format(url_for("users.profile", uid=user.id), user.username)
+
+
+from openctf.models import Config
+def send_email(recipient, subject, body):
+    data = {
+        "from": Config.get("mailgun_email"),
+        "subject": subject,
+        "html": body
+    }
+    data["to" if type(recipient) == str else "bcc"] = recipient
+    auth = ("api", Config.get("mailgun_apikey"))
+    return requests.post("{}/messages".format(Config.get("mailgun_domain")),
+                         auth=auth, data=data)
