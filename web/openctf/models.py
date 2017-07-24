@@ -73,6 +73,7 @@ class Challenge(db.Model):
     weightmap = db.Column(db.PickleType)
 
     solves = db.relationship("Solve", back_populates="challenge", lazy="subquery")
+    files = db.relationship("File", back_populates="challenge", lazy="subquery")
 
     def __repr__(self):
         return "Challenge:{}".format(self.id)
@@ -140,6 +141,18 @@ class Config(db.Model):
                 public_key=public_key
             ))
         return private_key, public_key
+
+
+class File(db.Model):
+    __tablename__ = "files"
+    id = db.Column(db.Integer, index=True, primary_key=True)
+    cid = db.Column(db.Integer, db.ForeignKey("challenges.id"))
+    location = db.Column(db.Text)
+
+    challenge = db.relationship("Challenge", back_populates="files", lazy="subquery")
+
+    def __repr__(self):
+        return "File:{}".format(self.id)
 
 
 class Solve(db.Model):
