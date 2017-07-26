@@ -12,6 +12,7 @@ blueprint = Blueprint("teams", __name__, template_folder="templates")
 
 
 @blueprint.route("/create", methods=["GET", "POST"])
+@login_required
 def create():
     if current_user.tid:
         return redirect(url_for("teams.profile"))
@@ -24,9 +25,11 @@ def create():
 
 @blueprint.route("/profile", methods=["GET", "POST"])
 @blueprint.route("/profile/<int:tid>", methods=["GET", "POST"])
-@login_required
 def profile(tid=None):
-    if tid is None and current_user.is_authenticated:
+    if tid is None and not current_user.is_authenticated:
+        return redirect(url_for("users.login"))
+
+    if tid is None:
         if current_user.tid is None:
             return redirect(url_for("teams.create"))
         else:
@@ -80,6 +83,7 @@ class CreateTeamForm(FlaskForm):
         if Team.query.filter(
                 func.lower(Team.teamname) == field.data.lower()).count():
             raise ValidationError("Team name is taken.")
+
 
 class ManageTeamForm(FlaskForm):
     teamname = StringField("Team Name", validators=[

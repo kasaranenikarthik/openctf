@@ -21,6 +21,7 @@ blueprint = Blueprint("users", __name__, template_folder="templates")
 
 
 @blueprint.route("/forgot", methods=["GET", "POST"])
+@login_required
 def forgot():
     return "forgot"
 
@@ -82,6 +83,7 @@ def register():
 
 
 @blueprint.route("/settings", methods=["GET", "POST"])
+@login_required
 def settings():
     change_password_form = ChangePasswordForm(prefix="change-password")
     profile_edit_form = ProfileEditForm(prefix="profile-edit")
