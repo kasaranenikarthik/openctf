@@ -40,6 +40,8 @@ def login_required(f):
             abort(403)
         return f(*args, **kwargs)
 
+    return wrapper
+
 
 def team_required(f):
     """

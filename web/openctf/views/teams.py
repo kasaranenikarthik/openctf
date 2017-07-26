@@ -1,10 +1,11 @@
-from flask import Blueprint, redirect, render_template, url_for
+from flask import Blueprint, abort, redirect, render_template, url_for
 from flask_login import current_user
 from flask_wtf import FlaskForm
 from sqlalchemy import func
 from wtforms.fields import StringField, SubmitField
 from wtforms.validators import InputRequired, Length, ValidationError
 
+from openctf.decorators import login_required
 from openctf.models import db, Activity, Team
 
 blueprint = Blueprint("teams", __name__, template_folder="templates")
@@ -23,8 +24,27 @@ def create():
 
 @blueprint.route("/profile", methods=["GET", "POST"])
 @blueprint.route("/profile/<int:tid>", methods=["GET", "POST"])
+@login_required
 def profile(tid=None):
-    return "profile"
+    if tid is None and current_user.is_authenticated:
+        if current_user.tid is None:
+            return redirect(url_for("teams.create"))
+        else:
+            return redirect(url_for("teams.profile", tid=current_user.tid))
+
+    team = Team.query.filter_by(id=tid).first()
+    if team is None:
+        abort(404)
+
+    manage_team_form = ManageTeamForm(prefix="manage-team")
+    if manage_team_form.submit.data and manage_team_form.validate_on_submit():
+        manage_team_form.populate_obj(team)
+        db.session.add(team)
+        db.session.commit()
+
+    manage_team_form.teamname.data = team.teamname
+    manage_team_form.affiliation.data = team.affiliation
+    return render_template("teams/profile.j2", team=team, manage_team_form=manage_team_form)
 
 
 def create_team(form):
@@ -60,3 +80,15 @@ class CreateTeamForm(FlaskForm):
         if Team.query.filter(
                 func.lower(Team.teamname) == field.data.lower()).count():
             raise ValidationError("Team name is taken.")
+
+class ManageTeamForm(FlaskForm):
+    teamname = StringField("Team Name", validators=[
+        InputRequired("Please enter a team name."),
+        Length(3, 24,
+               "Your teamname must be between 3 and 24 characters long.")])
+    affiliation = StringField("Affiliation", validators=[
+        InputRequired("Please enter your school."),
+        Length(3, 36,
+               "Your school name must be between 3 and 36 characters long." +
+               "Use abbreviations if necessary.")])
+    submit = SubmitField("Update Team")
