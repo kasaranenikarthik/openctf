@@ -1,4 +1,5 @@
 from datetime import datetime
+import string
 
 from flask import Blueprint, flash, redirect, render_template, url_for
 from flask_wtf import FlaskForm
@@ -74,8 +75,10 @@ class SettingsForm(FlaskForm):
 
     allow_registrations = BooleanField("Allow Registrations")
     require_email_verification = BooleanField("Require email verification")
-    mailgun_domain = TextField("Mailgun Domain", validators=[RequiredIf("require_email_verification")])
+    mailgun_email = TextField("Mailgun Email", validators=[RequiredIf("require_email_verification"), Email("Please enter a valid email.")])
+    mailgun_domain = TextField("Mailgun Domain", validators=[RequiredIf("require_email_verification"), URL()])
     mailgun_apikey = TextField("Mailgun API Key", validators=[RequiredIf("require_email_verification")])
+    email_body = TextAreaField("Email Body", validators=[RequiredIf("require_email_verification")])
 
     start_time = DateTimeField("Start Time", validators=[InputRequired("Please enter a CTF start time.")])
     end_time = DateTimeField("End Time", validators=[InputRequired("Please enter a CTF end time.")])
@@ -85,3 +88,13 @@ class SettingsForm(FlaskForm):
 
     keywords = StringField("Keywords", validators=[Optional()])
     submit = SubmitField("Save Settings")
+
+    def validate_email_body(self, field):
+        try:
+            string.Template(field.data).substitute(
+                ctf_name="test",
+                link="test",
+                username="test",
+            )
+        except:
+            raise ValidationError("Bad email template.")

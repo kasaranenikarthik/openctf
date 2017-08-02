@@ -10,9 +10,49 @@ from passlib.hash import bcrypt
 from sqlalchemy.ext.hybrid import hybrid_property
 
 from openctf.extensions import celery, login_manager
-from openctf.util import generate_identicon
+from openctf.util import generate_identicon, generate_team_link, generate_user_link
 
 db = SQLAlchemy()
+
+
+class Activity(db.Model):
+    __tablename__ = "activities"
+    id = db.Column(db.Integer, index=True, primary_key=True)
+    tid = db.Column(db.Integer, db.ForeignKey("teams.id"))
+    uid = db.Column(db.Integer, db.ForeignKey("users.id"), index=True)
+    pid = db.Column(db.Integer, db.ForeignKey("challenges.id"))
+    _timestamp = db.Column("date", db.DateTime, default=datetime.now)
+
+    user = db.relationship("User", back_populates="activity", lazy="subquery")
+
+    _type = db.Column(db.Integer)
+    REGISTERED = 0
+    CREATED_TEAM = 1
+    JOINED_TEAM = 2
+    LEFT_TEAM = 3
+    SOLVED = 4
+
+    def __repr__(self):
+        return "Activity:{}".format(self.id)
+
+    def __str__(self):
+        team = Team.query.filter_by(id=self.tid).first()
+        if self._type == self.REGISTERED:
+            return "{} has created an account!".format(generate_user_link(self.user))
+        elif self._type == self.CREATED_TEAM:
+            return "{} has created {}.".format(generate_user_link(self.user), generate_team_link(team))
+        elif self._type == self.JOINED_TEAM:
+            return "{} has joined {}".format(generate_user_link(self.user), generate_team_link(team))
+        elif self._type == self.LEFT_TEAM:
+            return "{} has left {}.".format(generate_user_link(self.user), generate_team_link(team))
+        elif self._type == self.SOLVED:
+            challenge = Challenge.query.filter_by(id=pid).first()
+            return "{} has solved {}.".format(generate_user_link(self.user), challenge.name)
+        return ""
+
+    @hybrid_property
+    def timestamp(self):
+        return int(time.mktime(self._timestamp.timetuple()))
 
 
 class Challenge(db.Model):
@@ -33,6 +73,7 @@ class Challenge(db.Model):
     weightmap = db.Column(db.PickleType)
 
     solves = db.relationship("Solve", back_populates="challenge", lazy="subquery")
+    files = db.relationship("File", back_populates="challenge", lazy="subquery")
 
     def __repr__(self):
         return "Challenge:{}".format(self.id)
@@ -102,6 +143,18 @@ class Config(db.Model):
         return private_key, public_key
 
 
+class File(db.Model):
+    __tablename__ = "files"
+    id = db.Column(db.Integer, index=True, primary_key=True)
+    cid = db.Column(db.Integer, db.ForeignKey("challenges.id"))
+    location = db.Column(db.Text)
+
+    challenge = db.relationship("Challenge", back_populates="files", lazy="subquery")
+
+    def __repr__(self):
+        return "File:{}".format(self.id)
+
+
 class Solve(db.Model):
     __tablename__ = "solves"
     id = db.Column(db.Integer, index=True, primary_key=True)
@@ -126,7 +179,7 @@ class Team(db.Model):
     teamname = db.Column(db.Unicode(32), unique=True)
     affiliation = db.Column(db.Unicode(48))
     captain = db.Column(db.Integer)
-    banned = db.Column(db.Boolean)
+    banned = db.Column(db.Boolean, default=False)
 
     members = db.relationship("User", back_populates="team")
     solves = db.relationship("Solve", back_populates="team", lazy="subquery")
@@ -155,6 +208,7 @@ class User(db.Model):
 
     team = db.relationship("Team", back_populates="members", lazy="subquery")
     solves = db.relationship("Solve", back_populates="user", lazy="subquery")
+    activity = db.relationship("Activity", back_populates="user", order_by="desc(Activity._timestamp)")
 
     @property
     def avatar(self):
