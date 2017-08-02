@@ -1,0 +1,39 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "taskName": "Create Migrations (Debug)",
+            "type": "process",
+            "command": "${config:python.pythonPath}",
+            "args": [
+                "${workspaceRoot}/web/manage.py",
+                "db",
+                "migrate"
+            ],
+            "options": {
+                "cwd": "${workspaceRoot}/web",
+                "env": {
+                    "DATABASE_URL": "sqlite:///${workspaceRoot}/.data/openctf.db"
+                }
+            },
+            "problemMatcher": []
+        }
+        {
+            "taskName": "Run Migrations (Debug)",
+            "type": "process",
+            "command": "${config:python.pythonPath}",
+            "args": [
+                "${workspaceRoot}/web/manage.py",
+                "db",
+                "upgrade"
+            ],
+            "options": {
+                "cwd": "${workspaceRoot}/web",
+                "env": {
+                    "DATABASE_URL": "sqlite:///${workspaceRoot}/.data/openctf.db"
+                }
+            },
+            "problemMatcher": []
+        }
+    ]
+}

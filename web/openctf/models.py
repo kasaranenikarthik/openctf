@@ -190,6 +190,7 @@ class Team(db.Model):
 
 class User(db.Model):
     __tablename__ = "users"
+
     id = db.Column(db.Integer, index=True, primary_key=True)
     tid = db.Column(db.Integer, db.ForeignKey("teams.id"))
     name = db.Column(db.Unicode(32))

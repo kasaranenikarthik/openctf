@@ -58,7 +58,8 @@ def profile(id=None):
     user = User.get_by_id(id)
     if user is None:
         abort(404)
-    return render_template("users/profile.j2", user=user)
+    me = user.id == current_user.id if current_user.is_authenticated else False
+    return render_template("users/profile.j2", user=user, me=me)
 
 
 @blueprint.route("/register", methods=["GET", "POST"])

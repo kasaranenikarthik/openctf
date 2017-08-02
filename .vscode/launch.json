@@ -7,13 +7,14 @@
             "request": "launch",
             "cwd": "${workspaceRoot}/web",
             "stopOnEntry": false,
-            "pythonPath": "${workspaceRoot}/web/.virtualenv/bin/python3",
+            "pythonPath": "${config:python.pythonPath}",
             "program": "${workspaceRoot}/web/manage.py",
             "args": [
                 "runserver"
             ],
             "env": {
-                "DATABASE_URL": "mysql://root:@localhost/openctf_debug",
+                // "DATABASE_URL": "mysql://root:@localhost/openctf_debug",
+                "DATABASE_URL": "sqlite:///${workspaceRoot}/.data/openctf.db",
                 "FILESTORE_STATIC_HOST": "http://localhost:7910",
                 "FILESTORE_URL": "http://localhost:7910",
                 "OPENCTF_PORT": "8000",
