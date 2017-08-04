@@ -33,6 +33,8 @@ export default {
 }
 </script>
 
+<style src="./assets/bulma.sass" lang="scss"></style>
+
 <style lang="scss" scoped>
 #main-view {
     min-height: 80vh;
