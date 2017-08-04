@@ -33,7 +33,7 @@ export default {
 }
 </script>
 
-<style src="./assets/bulma.sass" lang="scss"></style>
+<style src="./assets/openctf.sass" lang="scss"></style>
 
 <style lang="scss" scoped>
 #main-view {

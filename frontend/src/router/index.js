@@ -24,7 +24,9 @@ var routes = [
     }
 ];
 
-export default new Router({
+var router = new Router({
     mode: "history",
     routes: routes
 });
+
+export default router;
