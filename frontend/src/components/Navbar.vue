@@ -14,6 +14,7 @@
             </div>
             <div class="navbar-end">
                 <router-link class="navbar-item" v-show="!isLoggedIn()" to="/login">Login</router-link>
+                <router-link class="navbar-item" v-show="!isLoggedIn()" to="/register">Register</router-link>
             </div>
         </div>
     </nav>
