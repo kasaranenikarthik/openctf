@@ -5,10 +5,10 @@
             "name": "OpenCTF (Debug)",
             "type": "python",
             "request": "launch",
-            "cwd": "${workspaceRoot}/web",
+            "cwd": "${workspaceRoot}/backend",
             "stopOnEntry": false,
             "pythonPath": "${config:python.pythonPath}",
-            "program": "${workspaceRoot}/web/manage.py",
+            "program": "${workspaceRoot}/backend/manage.py",
             "args": [
                 "runserver"
             ],
