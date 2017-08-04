@@ -1,6 +1,5 @@
 # Secret stuff
 .env
-.secret_key
 
 # Compiled files
 *.pyc

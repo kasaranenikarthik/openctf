@@ -8,6 +8,7 @@ flask-cache
 flask-celery-helper
 flask-login
 flask-migrate
+flask-restful
 flask-sqlalchemy
 flask-script
 flask-wtf

@@ -1,33 +1,31 @@
 <template>
     <nav class="navbar container">
         <div class="navbar-brand">
-            <a class="navbar-item" href="/">
-                OpenCTF
-            </a>
-            <div class="navbar-burger" data-target="mainNavbar">
+            <router-link class="navbar-item" to="/">OpenCTF</router-link>
+            <div class="navbar-burger" data-target="main-navbar">
                 <span></span>
                 <span></span>
                 <span></span>
             </div>
         </div>
-        <div id="mainNavbar" class="navbar-menu">
+        <div id="main-navbar" class="navbar-menu">
             <div class="navbar-start">
-                <div class="navbar-item has-dropdown is-hoverable">
-                    <div class="navbar-link is-active">About</div>
-                    <div class="navbar-dropdown ">
-                        <a class="navbar-item" href="/documentation/overview/start/">Overview</a>
-                        <a class="navbar-item" href="http://bulma.io/documentation/modifiers/syntax/">Modifiers</a>
-                        <a class="navbar-item" href="http://bulma.io/documentation/grid/columns/">Grid</a>
-                        <a class="navbar-item" href="http://bulma.io/documentation/layout/container/">Layout</a>
-                    </div>
-                </div>
+                <router-link class="navbar-item" to="/about">About</router-link>
+            </div>
+            <div class="navbar-end">
+                <router-link class="navbar-item" v-show="!isLoggedIn()" to="/login">Login</router-link>
             </div>
         </div>
     </nav>
 </template>
 
 <script>
+import { isLoggedIn } from "@/utils/auth";
+
 export default {
-    name: "navbar"
+    name: "navbar",
+    methods: {
+        isLoggedIn
+    }
 }
 </script>

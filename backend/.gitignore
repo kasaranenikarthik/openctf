@@ -1,1 +1,2 @@
 .virtualenv
+.secret_key

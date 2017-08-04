@@ -36,7 +36,7 @@ Object.keys(proxyTable).forEach(function (context) {
     app.use(proxyMiddleware(options.filter || context, options));
 });
 
-app.use(require("connect-history-api-fallback"));
+app.use(require("connect-history-api-fallback")());
 app.use(devMiddleware);
 app.use(hotMiddleware);
 
@@ -50,7 +50,7 @@ var readyPromise = new Promise(resolve => {
     _resolve = resolve;
 });
 
-console.log("[.] Starting dev server...");
+console.log("[.] Starting dev server on port " + port + "...");
 devMiddleware.waitUntilValid(() => {
     console.log("[+] Listening at " + uri + "\n");
     if (!!config.dev.autoOpenBrowser && process.env.NODE_ENV !== "testing") {
