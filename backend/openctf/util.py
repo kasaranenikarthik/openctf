@@ -107,6 +107,8 @@ def generate_user_link(user):
 
 
 from openctf.models import Config
+
+
 def send_email(recipient, subject, body):
     data = {
         "from": Config.get("mailgun_email"),

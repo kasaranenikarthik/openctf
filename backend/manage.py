@@ -16,7 +16,7 @@ migrate = Migrate(app, db)
 manager.add_command("db", MigrateCommand)
 
 port = int(os.getenv("OPENCTF_PORT", "80"))
-ServerCommand = Server(host="0.0.0.0", port=port, use_debugger=True, use_reloader=True)
+ServerCommand = Server(host="0.0.0.0", port=port, use_debugger=False, use_reloader=True)
 manager.add_command("runserver", ServerCommand)
 
 

@@ -1,9 +1,25 @@
+import json
+import logging
+from functools import wraps
+
 from flask import abort
 from flask_login import current_user
 
-from functools import wraps
-
 from openctf.models import Config
+
+
+def api_result(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        data = {}
+        status = 200
+        try:
+            data = f(*args, **kwargs)
+        except Exception as err:
+            status = 500
+            data = {"data": "Something went wrong. Please contact the CTF administrators.", "error": str(e)}
+        return json.dumps(data), status, {"Content-Type": "application/json; charset=utf-8"}
+    return f
 
 
 def admin_required(f):
@@ -19,7 +35,7 @@ def admin_required(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
         if not (current_user.is_authenticated and current_user.admin):
-            abort(403)
+            return abort(403)
         return f(*args, **kwargs)
 
     return wrapper
@@ -56,12 +72,13 @@ def team_required(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
         if current_user.level != 3 and \
-            (not hasattr(current_user, "team") or not current_user.tid):
+                (not hasattr(current_user, "team") or not current_user.tid):
             flash("You need a team to view this page!", "info")
             return redirect(url_for("teams.create"))
         return f(*args, **kwargs)
 
     return wrapper
+
 
 def block_before_competition(f):
     """

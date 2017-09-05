@@ -1,16 +1,16 @@
 import sys
+from datetime import datetime, timedelta
 
 from flask import Blueprint, abort, redirect, render_template, url_for
+from flask_login import login_user
 from flask_wtf import FlaskForm
 from wtforms import ValidationError
 from wtforms.fields import *
 from wtforms.validators import *
-from datetime import datetime, timedelta
 
-from openctf.config import (generate_verification_token, get_ctf_name,
-                            setup_complete)
+from openctf.config import get_ctf_name, setup_complete
+from openctf.decorators import api_result
 from openctf.extensions import cache
-from flask_login import login_user
 from openctf.models import Config, db
 from openctf.users import register_user
 
@@ -18,8 +18,9 @@ blueprint = Blueprint("base", __name__, template_folder="templates")
 
 
 @blueprint.route("/")
+@api_result
 def index():
-    return render_template("base/index.j2")
+    return "API is working."
 
 
 @blueprint.route("/setup", methods=["GET", "POST"])

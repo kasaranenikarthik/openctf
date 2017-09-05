@@ -1,18 +1,22 @@
-from datetime import datetime
 import string
+from datetime import datetime
 
-from flask import Blueprint, flash, redirect, render_template, url_for
+from flask import (Blueprint, abort, flash, redirect, render_template, request,
+                   url_for)
 from flask_wtf import FlaskForm
 from wtforms import ValidationError
 from wtforms.fields import *
 from wtforms.validators import *
+from openctf.logger import _log
 from wtforms_components import read_only
 
-from openctf.config import (get_allow_registrations, get_ctf_name,
-                            get_require_email_verification)
+from openctf.config import (generate_verification_token,
+                            get_allow_registrations, get_ctf_name,
+                            get_require_email_verification, setup_complete)
+from openctf.decorators import admin_required, api_result
 from openctf.extensions import cache
-from openctf.decorators import admin_required
 from openctf.models import Config
+import sys
 from openctf.util import RequiredIf
 
 blueprint = Blueprint("admin", __name__, template_folder="templates")
@@ -21,7 +25,22 @@ blueprint = Blueprint("admin", __name__, template_folder="templates")
 @blueprint.route("/")
 @admin_required
 def index():
-    return "overview"
+    if not setup_complete():
+        generate_verification_token()
+        return {""}
+
+
+@blueprint.route("/setup", methods=["GET", "POST"])
+@api_result
+def setup():
+    _log("error", "SHIET")
+    if setup_complete():
+        return abort(404)
+    if request.method == "GET":
+        generate_verification_token()
+        return {}
+    elif request.method == "POST":
+        return {}
 
 
 @blueprint.route("/settings", methods=["GET", "POST"])

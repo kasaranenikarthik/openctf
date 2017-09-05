@@ -6,29 +6,29 @@
             "type": "process",
             "command": "${config:python.pythonPath}",
             "args": [
-                "${workspaceRoot}/web/manage.py",
+                "${workspaceRoot}/backend/manage.py",
                 "db",
                 "migrate"
             ],
             "options": {
-                "cwd": "${workspaceRoot}/web",
+                "cwd": "${workspaceRoot}/backend",
                 "env": {
                     "DATABASE_URL": "sqlite:///${workspaceRoot}/.data/openctf.db"
                 }
             },
             "problemMatcher": []
-        }
+        },
         {
             "taskName": "Run Migrations (Debug)",
             "type": "process",
             "command": "${config:python.pythonPath}",
             "args": [
-                "${workspaceRoot}/web/manage.py",
+                "${workspaceRoot}/backend/manage.py",
                 "db",
                 "upgrade"
             ],
             "options": {
-                "cwd": "${workspaceRoot}/web",
+                "cwd": "${workspaceRoot}/backend",
                 "env": {
                     "DATABASE_URL": "sqlite:///${workspaceRoot}/.data/openctf.db"
                 }

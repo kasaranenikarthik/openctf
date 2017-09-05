@@ -20,12 +20,12 @@ def create_app(config=None, name=__name__):
         app.jinja_env.globals.update(get_allow_registrations=get_allow_registrations)
 
         # setup handler
-        @app.before_request
-        def check_setup_completed():
-            if request.path.startswith("/assets"):
-                return
-            if not setup_complete() and request.path != url_for("base.setup"):
-                return redirect(url_for("base.setup"))
+        # @app.before_request
+        # def check_setup_completed():
+        #     if request.path.startswith("/assets"):
+        #         return
+        #     if not setup_complete() and request.path != url_for("base.setup"):
+        #         return redirect(url_for("base.setup"))
 
         # configure extensions
         cache.init_app(app)
