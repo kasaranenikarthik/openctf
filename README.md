@@ -1,3 +1,6 @@
+by the way, this is on hiatus until the next EasyCTF happens. we'll update this with the latest platform after that
+====
+
 OpenCTF
 =======
 
