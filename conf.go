@@ -11,7 +11,8 @@ import (
 // Config describes the configuration for all of OpenCTF.
 type Config struct {
 	CTFName     string `yaml:"ctf-name"`
-	BindAddress string `yaml:"bind-address,flow"`
+	BindAddress string `yaml:"bind-address"`
+	Environment string `yaml:"environment"`
 }
 
 var (
@@ -19,6 +20,7 @@ var (
 	sampleConfig = Config{
 		"OpenCTF",
 		":1600",
+		"production",
 	}
 
 	// ErrorNoConfigFile is thrown when the file isn't there.
