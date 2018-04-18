@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/go-macaron/bindata"
 	"gopkg.in/macaron.v1"
 )
 
@@ -16,6 +17,16 @@ type Webserver struct {
 // CreateServer generates a new gin server
 func CreateServer(config Config) (server Webserver, err error) {
 	m := macaron.Classic()
+	m.Use(macaron.Static("public",
+		macaron.StaticOptions{
+			FileSystem: bindata.Static(bindata.Options{
+				Asset:      Asset,
+				AssetDir:   AssetDir,
+				AssetNames: AssetNames,
+				Prefix:     "",
+			}),
+		},
+	))
 
 	server = Webserver{m, config}
 	return

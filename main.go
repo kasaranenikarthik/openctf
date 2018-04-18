@@ -1,6 +1,6 @@
 package main
 
-//go:generate go-bindata -pkg core -o core/bindata.go static templates
+//go:generate go-bindata -pkg core -o core/bindata.go public
 
 import (
 	"fmt"
