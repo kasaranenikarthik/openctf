@@ -1,0 +1,27 @@
+{
+  "name": "openctf",
+  "version": "0.1.0",
+  "description": "Open-source CTF framework.",
+  "scripts": {
+    "build": ""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/easyctf/openctf.git"
+  },
+  "author": "EasyCTF Team <team@easyctf.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/easyctf/openctf/issues"
+  },
+  "homepage": "https://github.com/easyctf/openctf#readme",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-svelte": "^0.4.0",
+    "html-webpack-plugin": "^3.2.0",
+    "node-sass": "^4.8.3",
+    "sass-loader": "^7.0.1",
+    "svelte-loader": "^2.8.1",
+    "webpack": "^4.6.0"
+  }
+}

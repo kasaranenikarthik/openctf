@@ -1,0 +1,3 @@
+// OpenCTF
+
+console.log("nice");

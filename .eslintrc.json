@@ -1,0 +1,40 @@
+{
+    "env": {
+        "browser": true,
+        "commonjs": true,
+        "es6": true,
+        "node": true
+    },
+    "parserOptions": {
+        "ecmaFeatures": {
+            "jsx": true
+        },
+        "ecmaVersion": 8,
+        "sourceType": "module"
+    },
+    "rules": {
+        "no-var": "error",
+        "quotes": [ "error", "double" ],
+        "comma-dangle": ["warn", "always"],
+        "comma-spacing": "warn",
+        "constructor-super": "warn",
+        "eol-last": "warn",
+        "indent": [ "warn", 2 ],
+        "key-spacing": [ "warn", { "align": "value", "afterColon": true, "beforeColon": true, "mode": "strict" } ],
+        "keyword-spacing": "warn",
+        "no-const-assign": "warn",
+        "no-multi-spaces": "warn",
+        "no-this-before-super": "warn",
+        "no-trailing-spaces": "warn",
+        "no-undef": "warn",
+        "no-unreachable": "warn",
+        "no-unused-vars": [ "warn", { "argsIgnorePattern": "^_" } ],
+        "no-whitespace-before-property": "warn",
+        "semi-spacing": [ "warn", { "before": false, "after": true } ],
+        "space-before-blocks": "warn",
+        "space-before-function-paren": ["warn", "never"],
+        "space-in-parens": [ "warn", "never" ],
+        "space-infix-ops": "warn",
+        "valid-typeof": "warn"
+    }
+}

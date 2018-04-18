@@ -1,2 +1,10 @@
+node_modules
+
 /openctf
 /config.yml
+
+!/public/.gitkeep
+/public/*
+
+# Does npm support not overwriting package-lock.json yet?
+/package-lock.json

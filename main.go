@@ -1,5 +1,7 @@
 package main
 
+//go:generate go-bindata -pkg core -o core/bindata.go static templates
+
 import (
 	"fmt"
 	"log"

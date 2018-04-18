@@ -16,11 +16,6 @@ type Webserver struct {
 // CreateServer generates a new gin server
 func CreateServer(config Config) (server Webserver, err error) {
 	m := macaron.Classic()
-	m.Use(macaron.Renderer())
-
-	m.Get("/", func(c *macaron.Context) {
-		c.HTML(200, "index")
-	})
 
 	server = Webserver{m, config}
 	return
