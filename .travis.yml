@@ -4,6 +4,7 @@ cache:
     - node_modules
 before_script:
   - npm install
+  - go get -v
   - go get -u github.com/jteeuwen/go-bindata/...
   
   - npm run build
