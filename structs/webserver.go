@@ -4,12 +4,15 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/go-xorm/xorm"
+
 	"gopkg.in/macaron.v1"
 )
 
 // Webserver represents an OpenCTF server
 type Webserver struct {
 	M      *macaron.Macaron
+	Db     *xorm.Engine
 	Config Config
 }
 

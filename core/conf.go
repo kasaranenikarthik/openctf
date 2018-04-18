@@ -24,9 +24,9 @@ var (
 	ErrorNoConfigFile = errors.New("The configuration file is missing")
 )
 
-// ReadConfig reads from the config file based on cmd-line arguments.
-func ReadConfig() (config structs.Config, err error) {
-	return LoadConfigFile("config.yml")
+// ValidateConfig will validate your configuration based on rules.
+func ValidateConfig(config structs.Config) error {
+	return nil
 }
 
 // LoadConfigFile loads a configuration from the given file.
@@ -40,6 +40,7 @@ func LoadConfigFile(filename string) (config structs.Config, err error) {
 		return
 	}
 	config, err = LoadConfig(contents)
+	ValidateConfig(config)
 	return
 }
 
