@@ -1,5 +1,6 @@
-language: go
-go:
-  - "1.9"
+language: generic
+before_script:
+  - npm install
+  - npm run build
 notifications:
   email: false

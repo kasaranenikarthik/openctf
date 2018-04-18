@@ -3,6 +3,7 @@ node_modules
 /core/bindata.go
 /openctf
 /config.yml
+/test.db
 
 !/public/.gitkeep
 /public/*
