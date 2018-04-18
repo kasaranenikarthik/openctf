@@ -21,8 +21,12 @@ func CreateServer(config structs.Config) (*structs.Webserver, error) {
 		Config: config,
 	}
 
+	// middleware
 	server.M.Use(macaron.Renderer())
 	server.M.Use(session.Sessioner())
+
+	// custom service to give endpoints access to the config/models
+	server.M.Map(&server)
 
 	// for serving the actual HTML/JS site
 	server.M.Use(macaron.Static("public",
