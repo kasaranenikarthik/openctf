@@ -4,13 +4,16 @@ import (
 	"github.com/easyctf/openctf/api"
 	"github.com/easyctf/openctf/structs"
 	"github.com/go-macaron/bindata"
+	"github.com/go-macaron/session"
 	"gopkg.in/macaron.v1"
 )
 
 // CreateServer generates a new gin server
-func CreateServer(config structs.Config) (server structs.Webserver, err error) {
+func CreateServer(config structs.Config) (*structs.Webserver, error) {
 	m := macaron.Classic()
-	server = structs.Webserver{M: m, Config: config}
+	m.Use(session.Sessioner())
+
+	server := structs.Webserver{M: m, Config: config}
 
 	// for serving the actual HTML/JS site
 	m.Use(macaron.Static("public",
@@ -25,6 +28,6 @@ func CreateServer(config structs.Config) (server structs.Webserver, err error) {
 	))
 
 	// API routes
-	m.Group("/api", api.RouteAPI(server))
-	return
+	m.Group("/api", api.RouteAPI(&server))
+	return &server, nil
 }

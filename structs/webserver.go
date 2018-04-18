@@ -14,7 +14,7 @@ type Webserver struct {
 }
 
 // Start will actually launch the web server and begin listening.
-func (w Webserver) Start() {
+func (w *Webserver) Start() {
 	log.Println("starting server...")
 	log.Println(http.ListenAndServe(w.Config.BindAddress, w.M))
 }
