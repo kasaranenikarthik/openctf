@@ -2,6 +2,7 @@ package core
 
 import (
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"os"
 
@@ -16,16 +17,23 @@ var (
 		BindAddress: ":1600",
 		Environment: "production",
 		Database: structs.DatabaseConfig{
-			Provider: "sqlite",
+			Provider: "sqlite3",
 		},
 	}
 
 	// ErrorNoConfigFile is thrown when the file isn't there.
 	ErrorNoConfigFile = errors.New("The configuration file is missing")
+
+	// ErrorInvalidConfig is thrown (with a message) in case the config is invalid
+	ErrorInvalidConfig = func(msg string) error { return fmt.Errorf("Invalid configuration: %s", msg) }
 )
 
 // ValidateConfig will validate your configuration based on rules.
 func ValidateConfig(config structs.Config) error {
+	_, err := config.Database.GetDSN()
+	if err != nil {
+		return ErrorInvalidConfig(err.Error())
+	}
 	return nil
 }
 
@@ -40,7 +48,7 @@ func LoadConfigFile(filename string) (config structs.Config, err error) {
 		return
 	}
 	config, err = LoadConfig(contents)
-	ValidateConfig(config)
+	err = ValidateConfig(config)
 	return
 }
 
