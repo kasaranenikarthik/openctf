@@ -1,8 +1,17 @@
 OpenCTF
 =======
 
-[![Documentation](https://readthedocs.org/projects/openctf/badge/?version=latest)](http://openctf.readthedocs.io/en/latest/)
+[![Build Status](https://travis-ci.org/EasyCTF/openctf.svg?branch=master)](https://travis-ci.org/EasyCTF/openctf)
 
 Under construction.
 
 Find the old version in the `old` branch.
+
+Roadmap:
+
+- [ ] user accounts
+- [ ] team creation
+- [ ] admin panel for challenges
+- [ ] challenge list
+- [ ] solving
+- [ ] leaderboard

@@ -1,32 +1,33 @@
-package main
+package core
 
 import (
+	"log"
 	"net/http"
 
-	"github.com/gin-gonic/gin"
+	"gopkg.in/macaron.v1"
 )
 
 // Webserver represents an OpenCTF server
 type Webserver struct {
-	gin    *gin.Engine
+	m      *macaron.Macaron
 	config Config
 }
 
 // CreateServer generates a new gin server
 func CreateServer(config Config) (server Webserver, err error) {
-	if config.Environment == "production" {
-		gin.SetMode(gin.ReleaseMode)
-	}
-	r := gin.Default()
-	r.GET("/", func(c *gin.Context) {
-		c.String(http.StatusOK, "hey there")
+	m := macaron.Classic()
+	m.Use(macaron.Renderer())
+
+	m.Get("/", func(c *macaron.Context) {
+		c.HTML(200, "index")
 	})
 
-	server = Webserver{r, config}
+	server = Webserver{m, config}
 	return
 }
 
 // Start will actually launch the web server and begin listening.
 func (w Webserver) Start() {
-	w.gin.Run(w.config.BindAddress)
+	log.Println("starting server...")
+	log.Println(http.ListenAndServe(w.config.BindAddress, w.m))
 }
