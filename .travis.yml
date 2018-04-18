@@ -1,6 +1,8 @@
 language: generic
 before_script:
   - npm install
+  - go get -u github.com/jteeuwen/go-bindata/...
+  
   - npm run build
 notifications:
   email: false
