@@ -1,4 +1,5 @@
-language: generic
+language: go
+go: ['1.9']
 cache:
   directories:
     - node_modules
