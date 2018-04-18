@@ -1,22 +1,18 @@
 package core
 
 import (
-	"log"
-	"net/http"
-
+	"github.com/easyctf/openctf/api"
+	"github.com/easyctf/openctf/structs"
 	"github.com/go-macaron/bindata"
 	"gopkg.in/macaron.v1"
 )
 
-// Webserver represents an OpenCTF server
-type Webserver struct {
-	m      *macaron.Macaron
-	config Config
-}
-
 // CreateServer generates a new gin server
-func CreateServer(config Config) (server Webserver, err error) {
+func CreateServer(config structs.Config) (server structs.Webserver, err error) {
 	m := macaron.Classic()
+	server = structs.Webserver{M: m, Config: config}
+
+	// for serving the actual HTML/JS site
 	m.Use(macaron.Static("public",
 		macaron.StaticOptions{
 			FileSystem: bindata.Static(bindata.Options{
@@ -28,12 +24,7 @@ func CreateServer(config Config) (server Webserver, err error) {
 		},
 	))
 
-	server = Webserver{m, config}
+	// API routes
+	m.Group("/api", api.RouteAPI(server))
 	return
-}
-
-// Start will actually launch the web server and begin listening.
-func (w Webserver) Start() {
-	log.Println("starting server...")
-	log.Println(http.ListenAndServe(w.config.BindAddress, w.m))
 }

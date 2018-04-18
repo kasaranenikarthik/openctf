@@ -5,41 +5,17 @@ import (
 	"io/ioutil"
 	"os"
 
+	"github.com/easyctf/openctf/structs"
 	"gopkg.in/yaml.v2"
 )
 
-// DatabaseConfig describes the database configuration for OpenCTF.
-type DatabaseConfig struct {
-	Provider string `yaml:"provider"`
-	File     string `yaml:"file"`
-	Host     string `yaml:"host"`
-	Port     string `yaml:"port"`
-	Username string `yaml:"username"`
-	Password string `yaml:"password"`
-}
-
-// CacheConfig describe the cache configuration (if any) for OpenCTF.
-type CacheConfig struct {
-	Enabled bool `yaml:"enabled"`
-}
-
-// Config describes the configuration for all of OpenCTF.
-type Config struct {
-	CTFName     string `yaml:"ctf-name"`
-	BindAddress string `yaml:"bind-address"`
-	Environment string `yaml:"environment"`
-
-	Database DatabaseConfig `yaml:"database"`
-	Cache    CacheConfig    `yaml:"cache"`
-}
-
 var (
 	// sampleConfig
-	sampleConfig = Config{
+	sampleConfig = structs.Config{
 		CTFName:     "OpenCTF",
 		BindAddress: ":1600",
 		Environment: "production",
-		Database: DatabaseConfig{
+		Database: structs.DatabaseConfig{
 			Provider: "sqlite",
 		},
 	}
@@ -49,12 +25,12 @@ var (
 )
 
 // ReadConfig reads from the config file based on cmd-line arguments.
-func ReadConfig() (config Config, err error) {
+func ReadConfig() (config structs.Config, err error) {
 	return LoadConfigFile("config.yml")
 }
 
 // LoadConfigFile loads a configuration from the given file.
-func LoadConfigFile(filename string) (config Config, err error) {
+func LoadConfigFile(filename string) (config structs.Config, err error) {
 	contents, err := ioutil.ReadFile(filename)
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -68,13 +44,13 @@ func LoadConfigFile(filename string) (config Config, err error) {
 }
 
 // LoadConfig loads a configuration from the given bytearray.
-func LoadConfig(contents []byte) (config Config, err error) {
+func LoadConfig(contents []byte) (config structs.Config, err error) {
 	err = yaml.Unmarshal(contents, &config)
 	return
 }
 
 // WriteSampleConfig writes the sample configuration into the given file.
-func WriteSampleConfig(filename string) (config Config, err error) {
+func WriteSampleConfig(filename string) (config structs.Config, err error) {
 	contents, err := yaml.Marshal(&sampleConfig)
 	if err != nil {
 		return
