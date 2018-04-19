@@ -4,8 +4,11 @@ import (
 	"github.com/easyctf/openctf/api"
 	"github.com/easyctf/openctf/models"
 	"github.com/easyctf/openctf/structs"
+
 	"github.com/go-macaron/bindata"
+	"github.com/go-macaron/csrf"
 	"github.com/go-macaron/session"
+
 	"gopkg.in/macaron.v1"
 )
 
@@ -24,6 +27,7 @@ func CreateServer(config structs.Config) (*structs.Webserver, error) {
 	// middleware
 	server.M.Use(macaron.Renderer())
 	server.M.Use(session.Sessioner())
+	server.M.Use(csrf.Csrfer())
 
 	// custom service to give endpoints access to the config/models
 	server.M.Map(&server)

@@ -5,8 +5,8 @@ node_modules
 /config.yml
 /test.db
 
-!/public/.gitkeep
 /public/*
+!/public/.gitkeep
 
 # Does npm support not overwriting package-lock.json yet?
 /package-lock.json

@@ -1,8 +1,9 @@
 // const webpack = require("webpack");
-const HtmlWebpackPlugin = require("html-webpack-plugin")
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
-const mode = process.env.NODE_ENV || "development";
-const prod = mode === "production";
+const environment = process.env.NODE_ENV || "production";
+const prod = environment == "production";
 
 module.exports = {
   entry : {
@@ -12,9 +13,8 @@ module.exports = {
     extensions : [".js", ".html", ],
   },
   output : {
-    path :          __dirname + "/public",
-    filename :      "[name].js",
-    chunkFilename : "[name].[id].js",
+    path :     __dirname + "/public",
+    filename : "[name].[hash].js",
   },
   module : {
     rules : [
@@ -24,29 +24,33 @@ module.exports = {
         use :     {
           loader :  "svelte-loader",
           options : {
-            emitCss :   true,
-            cascade :   false,
-            store :     true,
-            hotReload : true,
+            // emitCss :   true,
+            cascade : false,
+            store :   true,
           },
         },
       },
       {
         test : /\.scss$/,
-        use :  [ "style-loader", "css-loader", "sass-loader" ],
+        use :  [
+          {loader : "style-loader", options : {hmr : false, }, },
+          {loader : "css-loader", },
+          {loader : "sass-loader", },
+        ],
       },
     ],
   },
-  mode,
+  mode :    "production",
   plugins : [
+    new MiniCssExtractPlugin({}),
     new HtmlWebpackPlugin({
       title :  "OpenCTF",
-      inject : "head",
+      inject : "body",
       meta :   {viewport : "width=device-width, initial-scale=1, shrink-to-fit=no", },
       minify : true,
       hash :   true,
       cache :  true,
     }),
   ],
-  devtool : prod ? false : "source-map",
+  devtool : prod ? "false" : "source-map",
 };

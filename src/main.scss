@@ -1,0 +1,12 @@
+@charset "UTF-8";
+
+/* test */
+
+@import "~bootstrap-sass/assets/stylesheets/_bootstrap-sprockets.scss";
+@import "~bootstrap-sass/assets/stylesheets/_bootstrap.scss";
+
+$background: #f0f0f0;
+
+body {
+    background-color: $background !important;
+}
