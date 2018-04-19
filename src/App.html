@@ -1,11 +1,29 @@
-<Navbar></Navbar>
-<Footer></Footer>
+<nav role="navigation" class="navbar navbar-inverse" id="navbar">
+    <Navbar></Navbar>
+</nav>
+
+<div style="min-height: 80vh;" id="router-target"></div>
+
+<div class="footer">
+    <Footer></Footer>
+</div>
 
 <script>
+    import { createRouter, RouterLink } from "svelte-router";
+
     import Navbar from "./components/Navbar.html";
     import Footer from "./components/Footer.html";
 
+    const router = createRouter({
+    });
+
     export default {
+        oncreate() {
+            router.create("#router-target");
+        },
+        ondestroy() {
+            router.destroy();
+        },
         components: { Navbar, Footer }
     }
 </script>

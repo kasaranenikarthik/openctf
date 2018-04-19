@@ -4,7 +4,7 @@
   "description": "Open-source CTF framework.",
   "sideEffects": false,
   "scripts": {
-    "build": "NODE_ENV=development rm -f public/* && webpack && go generate && go build"
+    "build": "rm -f public/* && webpack && go generate && go build"
   },
   "repository": {
     "type": "git",
@@ -31,5 +31,8 @@
     "svelte-loader": "2.5.1",
     "webpack": "^4.6.0",
     "webpack-cli": "^2.0.14"
+  },
+  "dependencies": {
+    "svelte-router": "^1.8.1"
   }
 }

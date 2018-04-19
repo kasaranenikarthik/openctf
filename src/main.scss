@@ -43,9 +43,9 @@ h6,
 
 .logo-table {
     margin: 10px;
-}
-
-.logo-table {
+    h2 {
+        margin: 0;
+    }
     td {
         padding: 10px;
         vertical-align: middle;
@@ -53,10 +53,6 @@ h6,
     a:hover {
         text-decoration: none;
     }
-}
-
-.logo-table h2 {
-    margin: 0;
 }
 
 .logo {
@@ -109,28 +105,22 @@ h6,
 }
 
 .site-footer {
-    /*margin-top: 90px;*/
-    background-color: #eee;
-    color: #999;
+    background-color: #eeeeee;
+    color: #999999;
     padding: 3em 0 0;
     font-size: 14.3px;
     position: relative;
-}
-
-.site-footer .footer-heading {
-    color: #555;
-}
-
-.footer-copyright {
-    margin-top: 2em;
-    padding: 2em 2em;
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
-    text-align: center;
-}
-
-.site-footer h5,
-.site-footer .h5 {
-    font-size: 1.2em;
+    h5,
+    .h5 {
+        font-size: 1.2em;
+    }
+    .footer-heading {
+        color: #555555;
+    }
+    .footer-copyright {
+        padding: 2em 2em;
+        text-align: center;
+    }
 }
 
 .container.jumbotron {
@@ -171,25 +161,6 @@ b {
 
 .navbar {
     border-radius: 0;
-}
-
-.site-footer {
-    background-color: #eee;
-    color: #999;
-    padding: 3em 0 0;
-    font-size: 14.3px;
-    position: relative;
-}
-
-.site-footer .footer-heading {
-    color: #555;
-}
-
-.footer-copyright {
-    margin-top: 2em;
-    padding: 2em 2em;
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
-    text-align: center;
 }
 
 h5,
