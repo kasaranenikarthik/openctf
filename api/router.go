@@ -3,7 +3,7 @@ package api
 import (
 	"github.com/easyctf/openctf/api/auth"
 	"github.com/easyctf/openctf/structs"
-	macaron "gopkg.in/macaron.v1"
+	"gopkg.in/macaron.v1"
 )
 
 // RouteAPI will set up the routes from the endpoints to their respective handler functions.
