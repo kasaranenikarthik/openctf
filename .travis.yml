@@ -1,5 +1,6 @@
 language: go
 go: ['1.9']
+install: true
 cache:
   directories:
     - node_modules
@@ -8,7 +9,7 @@ before_script:
   - go get -u github.com/jteeuwen/go-bindata/...
   - go generate -v
 
-  - go get -v
+  - go get -tv ./...
   - npm run build
 notifications:
   email: false
