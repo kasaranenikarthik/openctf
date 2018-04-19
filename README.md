@@ -1,7 +1,7 @@
 OpenCTF
 =======
 
-[![Build Status](https://travis-ci.org/EasyCTF/openctf.svg?branch=master)](https://travis-ci.org/EasyCTF/openctf)
+[![Build Status](https://travis-ci.org/easyctf/openctf.svg?branch=master)](https://travis-ci.org/easyctf/openctf)
 
 Under construction.
 
