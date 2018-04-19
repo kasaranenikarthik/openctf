@@ -2,5 +2,6 @@ package models
 
 // User is a user
 type User struct {
-	Id int64
+	ID    int64
+	Email string `xorm:"not null"`
 }
