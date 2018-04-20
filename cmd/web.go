@@ -3,6 +3,8 @@ package cmd
 import (
 	"log"
 
+	"github.com/easyctf/openctf/structs"
+
 	"github.com/easyctf/openctf/core"
 	"github.com/urfave/cli"
 )
@@ -17,6 +19,14 @@ var CmdWeb = cli.Command{
 			Usage: "Path to the configuration file.",
 			Value: "config.yml",
 		},
+		cli.StringFlag{
+			Name:  "bind",
+			Usage: "Bind address (overrides config.yml)",
+		},
+		cli.BoolFlag{
+			Name:  "no-frontend",
+			Usage: "Don't serve the static frontend.",
+		},
 	},
 	Action: func(c *cli.Context) {
 		// Read the config
@@ -24,6 +34,13 @@ var CmdWeb = cli.Command{
 		if err != nil {
 			log.Fatal(err)
 		}
+
+		// Environmental options
+		options := structs.WebserverOptions{
+			NoFrontend:  c.Bool("no-frontend"),
+			BindAddress: c.String("bind"),
+		}
+		config = config.Merge(options)
 
 		// Run the server
 		server, err := core.CreateServer(config)

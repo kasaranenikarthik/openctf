@@ -1,9 +1,8 @@
-// const webpack = require("webpack");
+const path = require("path");
+const webpack = require("webpack");
+
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-
-const environment = process.env.NODE_ENV || "production";
-const prod = environment == "production";
 
 module.exports = {
   entry : {
@@ -13,7 +12,7 @@ module.exports = {
     extensions : [".js", ".html", ],
   },
   output : {
-    path :     __dirname + "/public",
+    path :     path.join(__dirname, "generated"),
     filename : "[name].[hash].js",
   },
   module : {
@@ -51,6 +50,9 @@ module.exports = {
       hash :   true,
       cache :  true,
     }),
+    new webpack.DefinePlugin({
+      API_BASE : "/api",
+    }),
   ],
-  devtool : prod ? "false" : "source-map",
+  devtool : false,
 };

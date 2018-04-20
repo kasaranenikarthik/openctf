@@ -33,16 +33,22 @@ func CreateServer(config structs.Config) (*structs.Webserver, error) {
 	server.M.Map(&server)
 
 	// for serving the actual HTML/JS site
-	server.M.Use(macaron.Static("public",
-		macaron.StaticOptions{
-			FileSystem: bindata.Static(bindata.Options{
-				Asset:      Asset,
-				AssetDir:   AssetDir,
-				AssetNames: AssetNames,
-				Prefix:     "",
-			}),
-		},
-	))
+	if !server.Config.NoFrontend {
+		server.M.Use(macaron.Static("generated",
+			macaron.StaticOptions{
+				FileSystem: bindata.Static(bindata.Options{
+					Asset:      Asset,
+					AssetDir:   AssetDir,
+					AssetNames: AssetNames,
+					Prefix:     "",
+				}),
+			},
+		))
+	} else {
+		server.M.Get("/", func() string {
+			return "nope"
+		})
+	}
 
 	// API routes
 	server.M.Group("/api", api.RouteAPI(&server))

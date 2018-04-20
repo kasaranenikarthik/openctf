@@ -11,6 +11,8 @@ import style from "./main.scss";
 // svelte
 import App from "./App.html";
 
+console.log(API_BASE);
+
 const app = new App({
   target : document.body,
 });

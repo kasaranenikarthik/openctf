@@ -1,6 +1,6 @@
 package main
 
-//go:generate go-bindata -pkg core -o core/bindata.go public
+//go:generate go-bindata -pkg core -o core/bindata.go generated
 
 import (
 	"fmt"
@@ -14,14 +14,15 @@ import (
 
 func main() {
 	// Configuration setup
-	config, err := core.LoadConfigFile("config.yml")
+	_, err := core.LoadConfigFile("config.yml")
 	if err == core.ErrorNoConfigFile {
-		config, err = core.WriteSampleConfig("config.yml")
+		fmt.Println("No config file found, one has been generated for you.")
+		_, err = core.WriteSampleConfig("config.yml")
+		return
 	}
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("%+v\n", config)
 
 	app := cli.NewApp()
 	app.Commands = []cli.Command{

@@ -26,8 +26,18 @@ type Config struct {
 	BindAddress string `yaml:"bind-address"`
 	Environment string `yaml:"environment"`
 
-	Database DatabaseConfig `yaml:"database"`
-	Cache    CacheConfig    `yaml:"cache"`
+	Database   DatabaseConfig `yaml:"database"`
+	Cache      CacheConfig    `yaml:"cache"`
+	NoFrontend bool           `yaml:"-"`
+}
+
+// Merge adds WebserverOptions to the config
+func (c Config) Merge(w WebserverOptions) Config {
+	c.NoFrontend = w.NoFrontend
+	if w.BindAddress != "" {
+		c.BindAddress = w.BindAddress
+	}
+	return c
 }
 
 // GetDSN constructs a DSN out of the database configuration

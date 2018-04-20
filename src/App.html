@@ -1,5 +1,5 @@
 <nav role="navigation" class="navbar navbar-inverse" id="navbar">
-    <Navbar></Navbar>
+    <Navbar :user></Navbar>
 </nav>
 
 <div style="min-height: 80vh;" id="router-target"></div>
@@ -18,7 +18,12 @@
     });
 
     export default {
+        preload({ params, query }) {
+            console.log(params, query);
+            return { user: "hello" };
+        },
         oncreate() {
+            console.log("something");
             router.create("#router-target");
         },
         ondestroy() {

@@ -9,6 +9,12 @@ import (
 	"gopkg.in/macaron.v1"
 )
 
+// WebserverOptions represents some environment-specific options
+type WebserverOptions struct {
+	NoFrontend  bool
+	BindAddress string
+}
+
 // Webserver represents an OpenCTF server
 type Webserver struct {
 	M      *macaron.Macaron
