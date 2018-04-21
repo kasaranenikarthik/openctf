@@ -51,7 +51,7 @@ module.exports = {
       cache :  true,
     }),
     new webpack.DefinePlugin({
-      API_BASE : "/api",
+      API_BASE : JSON.stringify("/api"),
     }),
   ],
   devtool : false,
