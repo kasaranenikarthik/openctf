@@ -26,7 +26,9 @@ func CreateServer(config structs.Config) (*structs.Webserver, error) {
 
 	// middleware
 	server.M.Use(macaron.Renderer())
-	server.M.Use(session.Sessioner())
+	server.M.Use(session.Sessioner(session.Options{
+		CookieName: "session",
+	}))
 	server.M.Use(csrf.Csrfer())
 
 	// custom service to give endpoints access to the config/models
