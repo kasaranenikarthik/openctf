@@ -17,6 +17,10 @@ type RegisterForm struct {
 func RegisterUserEndpoint(c *macaron.Context, w *structs.Webserver, f RegisterForm) error {
 	user := models.User{}
 
+	if err := validateRegisterForm(f); err != nil {
+		return err
+	}
+
 	id, err := models.CreateUser(user)
 	if err != nil {
 		return err
@@ -24,5 +28,10 @@ func RegisterUserEndpoint(c *macaron.Context, w *structs.Webserver, f RegisterFo
 	c.JSON(200, struct{ ID int64 }{
 		ID: id,
 	})
+	return nil
+}
+
+func validateRegisterForm(f RegisterForm) error {
+
 	return nil
 }
