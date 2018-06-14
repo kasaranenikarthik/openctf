@@ -7,10 +7,11 @@ GOFLAGS := -i -v
 EXTRA_GOFLAGS ?=
 
 SOURCES ?= $(shell find . -name "*.go" -type f ! -path "*/bindata.go")
+PACKAGES ?= ./...
 TAGS ?=
 LDFLAGS := -X "main.Version=$(shell git describe --tags --always | sed 's/-/+/' | sed 's/^v//')" -X "main.Tags=$(TAGS)"
 
-BINDATA := templates/bindata.go
+BINDATA := public/bindata.go templates/bindata.go
 
 ifeq ($(OS), Windows_NT)
 	EXECUTABLE := openctf.exe
@@ -19,7 +20,7 @@ else
 endif
 
 .PHONY: all
-all: build
+all: generate build
 
 .PHONY: build
 build: $(EXECUTABLE)
@@ -34,7 +35,7 @@ generate:
 	@hash go-bindata > /dev/null 2>&1; if [ $$? -ne 0 ]; then \
 		$(GO) get -u github.com/jteeuwen/go-bindata/...; \
 	fi
-	$(GO) generate $(PACKAGES)
+	$(GO) generate -v $(PACKAGES)
 
 $(EXECUTABLE): $(SOURCES)
 	$(GO) get -v ./...

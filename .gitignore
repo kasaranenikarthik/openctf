@@ -1,5 +1,8 @@
 .sass-cache
 
+/static/index.css
+/static/index.css.map
+
 openctf
 openctf.conf
 

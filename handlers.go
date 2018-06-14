@@ -18,5 +18,6 @@ type Handlers struct {
 }
 
 func (h *Handlers) homeHandler(c *macaron.Context) {
+	c.Data["Version"] = Version
 	c.HTML(200, "index")
 }

@@ -8,7 +8,7 @@ before_script:
 - go get -u github.com/jteeuwen/go-bindata/...
 - go generate -v
 - go get -t -v ./...
-- make generate build
+- make
 
 notifications:
   email: false

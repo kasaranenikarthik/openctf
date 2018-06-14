@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/easyctf/openctf/static"
 	"github.com/easyctf/openctf/structs"
 	"github.com/easyctf/openctf/templates"
 	"github.com/go-macaron/csrf"
@@ -63,6 +64,9 @@ func newServer(app *structs.OpenCTF) *macaron.Macaron {
 
 	// custom service to give endpoints access to the config/models
 	srv.Map(app)
+
+	// static
+	srv.Use(static.Static())
 
 	// templates
 	srv.Use(templates.Renderer(app.Conf))
