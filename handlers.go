@@ -1,6 +1,9 @@
 package main
 
-import "net/http"
+import (
+	"net/http"
+)
 
-func homeHandler(w http.ResponseWriter, r *http.Request) {
+func (app *OpenCTF) homeHandler(w http.ResponseWriter, r *http.Request) {
+	app.templates["home"].ExecuteTemplate(w, "layout", struct{}{})
 }

@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"html/template"
 	"log"
 
 	"github.com/thehowl/conf"
@@ -31,6 +32,16 @@ func main() {
 		log.Fatal(err)
 	}
 
-	app := OpenCTF{c}
+	app := OpenCTF{
+		conf:      c,
+		templates: make(map[string]*template.Template),
+	}
+
+	t, err := app.generateTemplates()
+	if err != nil {
+		log.Fatal(err)
+	}
+	app.templates = t
+
 	app.Run()
 }

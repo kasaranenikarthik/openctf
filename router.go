@@ -2,10 +2,10 @@ package main
 
 import "github.com/gorilla/mux"
 
-func buildRouter(conf Config) *mux.Router {
+func (app *OpenCTF) buildRouter() *mux.Router {
 	r := mux.NewRouter()
 
-	r.HandleFunc("/", homeHandler)
+	r.HandleFunc("/", app.homeHandler)
 
 	return r
 }
