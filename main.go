@@ -7,9 +7,10 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/gorilla/mux"
 	"github.com/thehowl/conf"
 )
+
+var VERSION string
 
 func main() {
 	confFile := flag.String("conf", "openctf.conf", "Location of the config file (will be created if it doesn't exist).")
@@ -31,12 +32,9 @@ func main() {
 		log.Fatal(err)
 	}
 
-	r := mux.NewRouter()
-	r.HandleFunc("/", homeHandler)
-
 	srv := http.Server{
 		Addr:    c.Bind,
-		Handler: r,
+		Handler: buildRouter(c),
 
 		// doing this cuz mux page says so, this will be a configuration option soon
 		ReadTimeout:  15 * time.Second,
