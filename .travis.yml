@@ -6,7 +6,7 @@ go:
 
 before_script:
 - go get -u github.com/jteeuwen/go-bindata/...
-- go generate -v
+- make generate
 - go get -t -v ./...
 - make
 
