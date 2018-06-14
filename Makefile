@@ -35,4 +35,5 @@ generate:
 	$(GO) generate $(PACKAGES)
 
 $(EXECUTABLE): $(SOURCES)
+	$(GO) get -v ./...
 	$(GO) build $(GOFLAGS) $(EXTRA_GOFLAGS) -tags '$(TAGS)' -ldflags '-s -w $(LDFLAGS)' -o $@
