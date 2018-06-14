@@ -1,15 +1,22 @@
 package main
 
 import (
-	"net/http"
+	"gopkg.in/macaron.v1"
 
-	"github.com/easyctf/openctf/models"
+	"github.com/easyctf/openctf/structs"
 )
 
-type Context struct {
-	user *models.User
+func buildRoutes(app *structs.OpenCTF) {
+	h := Handlers{app}
+
+	app.Macaron.Get("/", h.homeHandler)
 }
 
-func (app *OpenCTF) homeHandler(w http.ResponseWriter, r *http.Request) {
-	app.templates["home"].ExecuteTemplate(w, "layout", struct{}{})
+// Handlers is a struct which is associated with route handlers
+type Handlers struct {
+	app *structs.OpenCTF
+}
+
+func (h *Handlers) homeHandler(c *macaron.Context) {
+	c.HTML(200, "index")
 }

@@ -1,4 +1,4 @@
-package main
+package structs
 
 // Config describes the configuration for this run of the application.
 type Config struct {
@@ -6,7 +6,7 @@ type Config struct {
 	TemplateDir string `description:"The directory containing templates to load."`
 }
 
-var defaultConfig = Config{
+var DefaultConfig = Config{
 	Bind:        ":4000",
 	TemplateDir: "./templates",
 }

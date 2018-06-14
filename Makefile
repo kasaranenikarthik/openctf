@@ -6,9 +6,11 @@ GOFMT ?= gofmt -s
 GOFLAGS := -i -v
 EXTRA_GOFLAGS ?=
 
-SOURCES ?= $(shell find . -name "*.go" -type f)
+SOURCES ?= $(shell find . -name "*.go" -type f ! -path "*/bindata.go")
 TAGS ?=
 LDFLAGS := -X "main.Version=$(shell git describe --tags --always | sed 's/-/+/' | sed 's/^v//')" -X "main.Tags=$(TAGS)"
+
+BINDATA := templates/bindata.go
 
 ifeq ($(OS), Windows_NT)
 	EXECUTABLE := openctf.exe
@@ -25,7 +27,7 @@ build: $(EXECUTABLE)
 .PHONY: clean
 clean:
 	$(GO) clean -i ./...
-	rm -rf $(EXECUTABLE)
+	rm -rf $(EXECUTABLE) $(BINDATA)
 
 .PHONY: generate
 generate:
