@@ -1,5 +1,7 @@
 platform: x64
 
+clone_folder: c:\gopath\src\github.com\easyctf\openctf
+
 image:
   - Visual Studio 2017
 
@@ -14,7 +16,7 @@ install:
   - go version
   - go env
   - go get -u github.com/jteeuwen/go-bindata/...
-  - go get -v
+  - go get -v ./...
 
 build_script:
   - go generate -v ./...
