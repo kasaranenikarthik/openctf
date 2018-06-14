@@ -4,17 +4,12 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"net/http"
-	"time"
 
 	"github.com/thehowl/conf"
 )
 
+// VERSION is the current version of OpenCTF, will be injected by the build script on release builds.
 var VERSION = "dev"
-
-type OpenCTF struct {
-	c Config
-}
 
 func main() {
 	confFile := flag.String("conf", "openctf.conf", "Location of the config file (will be created if it doesn't exist).")
@@ -38,16 +33,4 @@ func main() {
 
 	app := OpenCTF{c}
 	app.Run()
-}
-
-func (app *OpenCTF) Run() {
-	srv := http.Server{
-		Addr:    app.c.Bind,
-		Handler: buildRouter(app.c),
-
-		// doing this cuz mux page says so, this will be a configuration option soon
-		ReadTimeout:  15 * time.Second,
-		WriteTimeout: 15 * time.Second,
-	}
-	log.Fatal(srv.ListenAndServe())
 }
