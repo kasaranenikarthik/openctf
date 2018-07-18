@@ -1,4 +1,4 @@
-use wtforms::Field;
+use wtforms::*;
 
 #[derive(Form)]
 struct LoginForm {
